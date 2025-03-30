@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\{
     TestsController,
     ImageController,
     VideoController,
+    TaskController,
+    TaskListController,
     PHPMailerController
 };
 /*
@@ -53,6 +55,12 @@ Route::prefix('v1')
         Route::post("send-email", [PHPMailerController::class, "composeEmail"])->name("send-email");
     });
 
+    // ['middleware' => 'auth:sanctum',],
+Route::group( function () {
+    Route::apiResource('tasklist', TaskListController::class);
+
+
+});
 Route::post('semdmail', [MailController::class, 'sendMail']);
 
 // Route::prefix('v1')

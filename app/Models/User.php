@@ -51,4 +51,9 @@ class User extends Authenticatable
             set: static fn($value) => Hash::make((string) $value, [PASSWORD_DEFAULT]),
         );
     }
+
+    public function petSize(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(TaskList::class);
+    }
 }

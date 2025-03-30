@@ -52,8 +52,8 @@ class User extends Authenticatable
         );
     }
 
-    public function petSize(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function taskList(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(TaskList::class);
+        return $this->belongsToMany(TaskList::class, 'user_task_lists');
     }
 }

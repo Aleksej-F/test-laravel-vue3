@@ -14,7 +14,8 @@ class Task extends Model
         'text',
         'smallText',
         'complite',
-        'list_id'
+        'list_id',
+        'sorting'
     ];
 
     protected $hidden = [

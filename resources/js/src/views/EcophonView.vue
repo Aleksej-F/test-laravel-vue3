@@ -10,7 +10,7 @@
           
           <div class="wrap projects-title">
             <a href="https://www.ecophon.com" target="_blank" >
-              <img class="header-img" src="../assets/img/Of_distrib_eco.jpg" style="width:225px; height: 122px; ">
+              
             </a>
             
             <span  class="info-title">Акустические потолки и стеновые панели</span>
@@ -46,7 +46,7 @@
             <div class="acoustics-col">
               <div class="acoustics-img-cont">
                 <a href="https://www.ecophon.com" target="_blank" > www.ecophon.ru</a>
-                <img src="../assets/img/Ecophon-звук.jpg" alt="">
+                
               </div>
             </div>
           </div>

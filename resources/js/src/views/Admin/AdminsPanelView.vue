@@ -5,11 +5,7 @@
     @click.stop="getCatalogs"
   >
     Панель администратора {{  iconsMap['vue.js']}}
-    <img
-      src="../../assets//img/logo.png"
-      width="20"
-      alt=""
-    />
+   
   </div>
 </template>
 <script setup>

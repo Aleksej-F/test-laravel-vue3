@@ -4,7 +4,7 @@
     <MessageView/>
     <div class="header-logo">
       <RouterLink to="/">
-        <img src="../assets//img/logo.png" alt="">
+      
       </RouterLink>
     </div>
     <div class="wrap header-wrap">
@@ -16,11 +16,11 @@
         </div>
         <div class="header-header-contacts">
           <div class="header-header-contacts__row">
-            <img src="../assets/img/ico telephone.png" alt="">
+           
             <p>(812) 919-78-86</p>
           </div>
           <div class="header-header-contacts__row">
-            <img src="../assets/img/ico address.png" alt="">
+           
             <p>пр.Елизарова д.34Б оф.319</p>
           </div>
           <div class="header-header-contacts__row">

@@ -33,7 +33,7 @@ class TaskListController extends Controller
             ],
             message: count($taskList) > 0 ? 'Списки задач.' : 'Списки задач не созданы.',
     );
-        //
+        //taskList.l7933yx2.beget.tech
     }
 
     /**
@@ -97,6 +97,13 @@ class TaskListController extends Controller
      */  
     // 1|AuQPCTIoo55s7SMY94ib0wWttfezRcGl6t8lKRuf99566c0c
     // 2|96VuTDdIUIrfuArL2ksGqQ9h9RM4LEcRXIyhhqNj7d6948ba
+    //  http://testklass
+
+
+
+    //	1|17t6kJeNDeH6hB7PA0xfALcBK2nyvvCVRSmNrMNM9a011cb7
+
+
     public function destroy(Request $request, $id): \Illuminate\Http\JsonResponse
     {   
         $user = Auth::user();

@@ -1,7 +1,7 @@
 <template>
-  <TheHeader />
+  <!-- <TheHeader /> -->
   <RouterView />
-  <TheFooter />
+  <!-- <TheFooter /> -->
 </template>
 
 <script setup>

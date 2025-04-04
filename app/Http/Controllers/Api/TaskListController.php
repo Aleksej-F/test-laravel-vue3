@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Contracts\ResponseContract;
 
+use App\Models\Task;
 use App\Models\TaskList;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
@@ -43,10 +44,7 @@ class TaskListController extends Controller
     {
         $user = Auth::user();
         $taskList = new TaskList($request->input('taskList'));
-        
-        // $taskListNew = TaskList::create(
-        //     $taskList
-        // );
+       
         $user->taskList()->save($taskList);
         return $this->json->response(
             data: [
@@ -63,12 +61,25 @@ class TaskListController extends Controller
      */
     public function show(string $id)
     {
-        $taskList = TaskList::find($id);
-        $taskList->tasks;
-        return $this->json->response(data: [
-            'taskList' => ($taskList),
-            // 'slider' => ($facility->sliders)
-        ]);
+        $user = Auth::user();
+        $taskList = $user->taskList()->find($id);
+
+        if (is_null($taskList)){
+            return $this->json->error(
+                message: 'Попытка прочитать чужой список!',
+                errors: 501
+            ); 
+        }
+        $taskList = Task::where('list_id', $id)
+            ->orderBy('sorting')
+            ->get();
+       
+        return $this->json->response(
+            data: [
+                'taskList' => $taskList,
+            ],
+            message: 'Список задач.',
+    );
     }
 
     /**
@@ -78,15 +89,35 @@ class TaskListController extends Controller
     {
         $user = Auth::user();
         $taskListNew = $request->input('taskList');
-        
+        $taskListUserFind = $user->taskList()->find($id);
+        if (is_null($taskListUserFind)){
+            return $this->json->error(
+                message: 'Укажите, принадлежащий Вам, список для редактирования!',
+                errors: 501
+            );
+        };
         $taskList = TaskList::find($id);
-        // $user->taskList()->save($taskList);
         
-        $taskList->update($taskListNew); 
+        if (array_key_exists('id', $taskListNew) && !is_null($taskListNew['id']) && ($taskList->id !== $taskListNew['id'])){
+            return $this->json->error(
+                message: 'id списка не соответствует!',
+                errors: 501
+            );
+        };
+                
+        try {
+            $taskList->update($taskListNew);
+        } catch (\Throwable $e) {
+            return $this->json->error(
+                message: $e->getMessage(),
+                errors: 501
+            );
+        }
+
         // $user->taskList()->save($taskList); //обновление в связывающей таблице
         return $this->json->response(
             data: [
-                'taskList' => $taskList,
+                'taskListNew' => $taskList
             ],
             message: 'Список обновлен',
         );
@@ -97,12 +128,13 @@ class TaskListController extends Controller
      */  
     // 1|AuQPCTIoo55s7SMY94ib0wWttfezRcGl6t8lKRuf99566c0c
     // 2|96VuTDdIUIrfuArL2ksGqQ9h9RM4LEcRXIyhhqNj7d6948ba
+    
     //  http://testklass
-
+    //  http://tasklist.l7933yx2.beget.tech
 
 
     //	1|17t6kJeNDeH6hB7PA0xfALcBK2nyvvCVRSmNrMNM9a011cb7
-
+    //  5|zDwqN2Y7LLY1OfeAUuSgzlwTNvb6IAzWQAORaEEz79601cbe
 
     public function destroy(Request $request, $id): \Illuminate\Http\JsonResponse
     {   
@@ -111,7 +143,13 @@ class TaskListController extends Controller
         $message = '';
         $newListDelete = [];
         $taskListNew = [];
-        if ($taskListDelete !== null && is_array($taskListDelete) && count($taskListDelete) !== 0) {
+        
+        if ($taskListDelete == null){
+            $taskListUserFind = $user->taskList()->find($id);
+            if (!is_null($taskListUserFind)){
+                array_push( $newListDelete, $id);
+            }
+        } elseif (is_array($taskListDelete) && count($taskListDelete) !== 0) {
             
             foreach ($taskListDelete as $i => $value) {
                 $taskListUserFind = $user->taskList()->find($taskListDelete[$i]);
@@ -120,22 +158,30 @@ class TaskListController extends Controller
                 }
             }
            
-            if (count($newListDelete) > 0){
-                try {
-                    TaskList::destroy($newListDelete);
-                    $user->taskList()->detach($newListDelete);
-                    $taskListNew = $user->taskList()->get();
-                } catch (\Throwable $e) {
-                    return $this->json->error(message: $e->getMessage());
-                }
-                $message = 'Списки удалены.';
-            } else {
-                 $message = 'Укажите, принадлежащие Вам, списки для удаления!';
-            }
-            
         } else {
-            $message = 'Укажите списки для удаления!';
+            return   $this->json->error(
+                message: 'Укажите списки для удаления!',
+                errors: 501
+            );
         }
+
+        if (count($newListDelete) > 0){
+            try {
+                TaskList::destroy($newListDelete);
+                $user->taskList()->detach($newListDelete);
+                $taskListNew = $user->taskList()->get();
+            } catch (\Throwable $e) {
+                return $this->json->error(message: $e->getMessage());
+            }
+            $message = 'Списки удалены.';
+        } else {
+            return   $this->json->error(
+                message: 'Укажите, принадлежащие Вам, списки для удаления!',
+                errors: 501
+            );
+        }
+
+
         
         return $this->json->response(
             data: [

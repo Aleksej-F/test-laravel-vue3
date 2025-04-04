@@ -59,7 +59,7 @@ Route::prefix('v1')
 Route::middleware('auth:sanctum')
     ->group(function () {
         Route::apiResource('tasklist', TaskListController::class );
-        
+        Route::apiResource('task', TaskController::class );
        
 });
 

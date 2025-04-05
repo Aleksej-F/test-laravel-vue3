@@ -28,6 +28,12 @@ class TaskListController extends Controller
         
         $taskList = $user->taskList()->get();
 
+        foreach ($taskList as $i => $value) {
+            $taskList[$i]['tasks'] = Task::where('list_id', $value['id'])
+            ->orderBy('sorting')
+            ->get();
+        }
+       
         return $this->json->response(
             data: [
                 'taskLists' =>  $taskList
@@ -192,5 +198,59 @@ class TaskListController extends Controller
             message: $message,
         );
    
+    }
+
+    public function tasklistUpdate(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = Auth::user();
+        $taskListDelete = $user->taskList()->get();
+        $newListDelete = [];
+        if (count($taskListDelete) > 0){
+            foreach ($taskListDelete as $i => $value) {
+                array_push( $newListDelete, $value->id);
+                // $deleted = Task::where('list_id', $value->id)->delete();
+            }
+            try {
+                TaskList::destroy($newListDelete);
+                // $taskListDelete->delete();
+                $user->taskList()->detach($newListDelete);
+                // $taskListNew = $user->taskList()->get();
+            } catch (\Throwable $e) {
+                return $this->json->error(message: $e->getMessage(),
+                data: [
+                    'taskList' =>$newListDelete,
+                ],
+            
+                );
+            }
+            $message = 'Списки удалены.';
+        } 
+        $taskListNew = $request->input('taskList');
+        foreach ($taskListNew as $i => $value) {
+            $taskList = TaskList::create([
+               'text' => $value['text'],
+            ]);
+            $user->taskList()->save($taskList);
+            foreach ($value['tasks']as $ii => $taskValue) {
+                $task = new Task( $taskValue );
+                $task->list_id = $taskList->id;
+                $task->save();
+            }
+            
+        }
+        $taskListNew = $user->taskList()->get();
+
+        foreach ($taskListNew as $i => $value) {
+            $taskListNew[$i]['tasks'] = Task::where('list_id', $value['id'])
+            ->orderBy('sorting')
+            ->get();
+        }
+       
+        return $this->json->response(
+            data: [
+                'taskList' =>$taskListNew,
+            ],
+            message:  'Списки обновлены.',
+        );
     }
 }

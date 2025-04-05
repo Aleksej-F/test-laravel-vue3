@@ -60,6 +60,7 @@ Route::middleware('auth:sanctum')
     ->group(function () {
         Route::apiResource('tasklist', TaskListController::class );
         Route::apiResource('task', TaskController::class );
+        Route::post('tasklist/update',[TaskListController::class, "tasklistUpdate"]);
        
 });
 

@@ -12,7 +12,8 @@ use App\Http\Controllers\Api\{
     VideoController,
     TaskController,
     TaskListController,
-    PHPMailerController
+    PHPMailerController,
+    UsersController
 };
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +45,6 @@ Route::prefix('v1')
         });
         // Route::g('facility', FacilityController::class);
         Route::post('facilitys', [FacilityController::class, 'index']);
-
         Route::post('catalog', [ImageController::class, 'catalog'])->middleware('auth:sanctum');
         Route::apiResource('image', ImageController::class)->middleware('auth:sanctum');
         Route::apiResource('video', VideoController::class)->middleware('auth:sanctum');
@@ -58,10 +58,11 @@ Route::prefix('v1')
    
 Route::middleware('auth:sanctum')
     ->group(function () {
+        Route::apiResource('users', UsersController::class);
         Route::apiResource('tasklist', TaskListController::class );
-        Route::apiResource('task', TaskController::class );
+        Route::apiResource('tasks', TaskController::class );
         Route::post('tasklist/update',[TaskListController::class, "tasklistUpdate"]);
-       
+        Route::post('tasklist/share',[TaskListController::class, "tasklistShare"]);
 });
 
 Route::post('semdmail', [MailController::class, 'sendMail']);

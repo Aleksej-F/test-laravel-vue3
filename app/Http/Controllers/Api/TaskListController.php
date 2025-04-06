@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Contracts\ResponseContract;
 
+use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\TaskList;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use PhpParser\Node\Stmt\TryCatch;
+
 class TaskListController extends Controller
 {
     public function __construct(public ResponseContract $json)
@@ -32,6 +35,8 @@ class TaskListController extends Controller
             $taskList[$i]['tasks'] = Task::where('list_id', $value['id'])
             ->orderBy('sorting')
             ->get();
+            // $taskList[$i]['users'] =  $value->users()->get();
+            $taskList[$i]['usersCount'] = count($value->users()->get());
         }
        
         return $this->json->response(
@@ -203,54 +208,80 @@ class TaskListController extends Controller
     public function tasklistUpdate(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
-        $taskListDelete = $user->taskList()->get();
-        $newListDelete = [];
-        if (count($taskListDelete) > 0){
-            foreach ($taskListDelete as $i => $value) {
-                array_push( $newListDelete, $value->id);
-                // $deleted = Task::where('list_id', $value->id)->delete();
-            }
-            try {
-                TaskList::destroy($newListDelete);
-                // $taskListDelete->delete();
-                $user->taskList()->detach($newListDelete);
-                // $taskListNew = $user->taskList()->get();
-            } catch (\Throwable $e) {
-                return $this->json->error(message: $e->getMessage(),
-                data: [
-                    'taskList' =>$newListDelete,
-                ],
-            
-                );
-            }
+        //удаление старых списков
+        try {
+            $user->taskList()->delete();
             $message = 'Списки удалены.';
-        } 
-        $taskListNew = $request->input('taskList');
-        foreach ($taskListNew as $i => $value) {
+        } catch (\Throwable $e) {
+            return $this->json->error(
+                message: $e->getMessage(),
+            );
+        }
+        
+        //запись новых списков и задач
+        $taskListUpdate = $request->input('taskList');
+        $taskListSync = [];
+        foreach ($taskListUpdate as $i => $value) {
             $taskList = TaskList::create([
                'text' => $value['text'],
             ]);
-            $user->taskList()->save($taskList);
+            array_push($taskListSync, $taskList->id);
+            $n = 1;
             foreach ($value['tasks']as $ii => $taskValue) {
                 $task = new Task( $taskValue );
                 $task->list_id = $taskList->id;
+                $task->sorting = $n;
+                $n += 1;
                 $task->save();
             }
-            
         }
+        // обновление записей в промежуточной таблице
+        $user->taskList()->sync($taskListSync);
+        $message = 'Списки обновлены.';
+        
+        // получение обновленных данных
         $taskListNew = $user->taskList()->get();
 
         foreach ($taskListNew as $i => $value) {
-            $taskListNew[$i]['tasks'] = Task::where('list_id', $value['id'])
+            $taskListNew[$i]['tasks'] = TaskResource::collection(Task::where('list_id', $value['id'])
             ->orderBy('sorting')
-            ->get();
+            ->get()
+            );
         }
        
         return $this->json->response(
             data: [
                 'taskList' =>$taskListNew,
             ],
-            message:  'Списки обновлены.',
+            message: $message,
         );
     }
+
+    public function tasklistShare (Request $request): \Illuminate\Http\JsonResponse
+    {
+        $taskListShare = $request->input('taskList');
+        $userShare = $request->input('user');
+        $user = Auth::user();
+        $taskListUserFind = $user->taskList()->find($taskListShare['id']);
+        if (!is_null($taskListUserFind)){
+            $taskList = TaskList::find($taskListShare['id']);
+            $taskList->users()->attach($userShare['id']);
+        } else{
+            return   $this->json->error(
+                message: 'Укажите, принадлежащий Вам, спискок!',
+                errors: 501
+            ); 
+        }
+
+        return $this->json->response(
+            data: [
+                'taskList' => $taskListShare['id'],
+                'userShare' => $userShare['id']
+            ],
+            message: "Вы поделись списком с пользователем - ",
+        );
+
+
+    }
+    
 }

@@ -26,6 +26,6 @@ class Task extends Model
 
     public function tasklist(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(TaskList::class, 'list_id', 'id');
+        return $this->belongsTo(TaskList::class, 'list_id', 'id',);
     }
 }

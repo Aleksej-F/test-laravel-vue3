@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('smallText')->nullable();
             $table->boolean('complite')->default(false);
             $table->foreignId('list_id')->index()->constrained('task_lists')->nullable();
-            $table->tinyInteger('sorting');
+            $table->tinyInteger('sorting')->nullable();;
             $table->timestamps();
         });
     }

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('list_id')->index()->constrained('task_lists')->nullable();
             $table->tinyInteger('sorting')->nullable();;
             $table->timestamps();
+            $table->cascadeOnUpdate();
+            $table->cascadeOnDelete();
         });
     }
 

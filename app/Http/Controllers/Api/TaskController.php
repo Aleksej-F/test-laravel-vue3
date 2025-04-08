@@ -46,7 +46,7 @@ class TaskController extends Controller
         if (is_null($taskList)){
             return $this->json->error(
                 message: 'Попытка добавить задачу в чужой список!',
-                errors: 501
+                errors: 403
             ); 
         }
         $taskMaxNum = Task::where('list_id',$taskNew['list_id'])->max('sorting');
@@ -74,14 +74,14 @@ class TaskController extends Controller
             if (is_null( $task)){
                 return   $this->json->error(
                     message: 'Попытка получить несуществующую задачу!',
-                    errors: 501
+                    errors: 400
                 );
             }
             $taskListUserFind = $user->taskList()->find($task['list_id']);
             if (is_null($taskListUserFind)){
                 return   $this->json->error(
                     message: 'Попытка получить несвою задачу!',
-                    errors: 501
+                    errors: 403
                 );
             } 
         } catch (\Throwable $e) {
@@ -111,7 +111,7 @@ class TaskController extends Controller
         if (is_null($taskNew) || !is_array($taskNew)){
             return   $this->json->error(
                 message: 'Укажите описание задачи для внесения изменений!',
-                errors: 501
+                errors: 400
             );
         }
         if (array_key_exists('id', $taskNew)){
@@ -122,20 +122,20 @@ class TaskController extends Controller
             if (is_null( $task)){
                 return   $this->json->error(
                     message: 'Попытка изменить несуществующую задачу!',
-                    errors: 501
+                    errors: 400
                 );
             }
             $taskListUserFind = $user->taskList()->find($task['list_id']);
             if (is_null($taskListUserFind)){
                 return   $this->json->error(
                     message: 'Попытка изменить несвою задачу!',
-                    errors: 501
+                    errors: 403
                 );
             } 
         } catch (\Throwable $e) {
             return $this->json->error(
                 message: $e->getMessage(),
-                errors: 501
+                errors: 503
             );
         }
         $sortBol =  $taskNew['sorting'] !== $task->sorting;
@@ -144,7 +144,7 @@ class TaskController extends Controller
         } catch (\Throwable $e) {
             return $this->json->error(
                 message: $e->getMessage(),
-                errors: 501
+                errors: 503
             );
         }
         $tasks = [];
@@ -191,14 +191,14 @@ class TaskController extends Controller
                 if (is_null( $task)){
                     return   $this->json->error(
                         message: 'Попытка удалить несуществующую задачу!',
-                        errors: 501
+                        errors: 403
                     );
                 }
                 $taskListUserFind = $user->taskList()->find($task['list_id']);
             } catch (\Throwable $e) {
                 return $this->json->error(
                     message: $e->getMessage(),
-                    errors: 501
+                    errors: 503
                 );
             }
             if (!is_null($taskListUserFind)){
@@ -218,7 +218,7 @@ class TaskController extends Controller
                  } catch (\Throwable $e) {
                     return $this->json->error(
                         message: $e->getMessage(),
-                        errors: 501
+                        errors: 503
                     );
                 }
             }
@@ -226,7 +226,7 @@ class TaskController extends Controller
         } else {
             return   $this->json->error(
                 message: 'Укажите задачи для удаления!',
-                errors: 501
+                errors: 400
             );
         }
         
@@ -240,7 +240,7 @@ class TaskController extends Controller
         } else {
             return   $this->json->error(
                 message: 'Укажите, принадлежащие Вам, задачи для удаления!',
-                errors: 501
+                errors: 403
             );
         }
        

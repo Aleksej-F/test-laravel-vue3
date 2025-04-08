@@ -78,7 +78,7 @@ class TaskListController extends Controller
         if (is_null($taskList)){
             return $this->json->error(
                 message: 'Попытка прочитать чужой список!',
-                errors: 501
+                errors: 403
             ); 
         }
         $taskList = Task::where('list_id', $id)
@@ -104,7 +104,7 @@ class TaskListController extends Controller
         if (is_null($taskListUserFind)){
             return $this->json->error(
                 message: 'Укажите, принадлежащий Вам, список для редактирования!',
-                errors: 501
+                errors: 403
             );
         };
         $taskList = TaskList::find($id);
@@ -112,7 +112,7 @@ class TaskListController extends Controller
         if (array_key_exists('id', $taskListNew) && !is_null($taskListNew['id']) && ($taskList->id !== $taskListNew['id'])){
             return $this->json->error(
                 message: 'id списка не соответствует!',
-                errors: 501
+                errors: 400
             );
         };
                 
@@ -172,7 +172,7 @@ class TaskListController extends Controller
         } else {
             return   $this->json->error(
                 message: 'Укажите списки для удаления!',
-                errors: 501
+                errors: 400
             );
         }
 
@@ -188,7 +188,7 @@ class TaskListController extends Controller
         } else {
             return   $this->json->error(
                 message: 'Укажите, принадлежащие Вам, списки для удаления!',
-                errors: 501
+                errors: 403
             );
         }
 
@@ -269,7 +269,7 @@ class TaskListController extends Controller
         } else{
             return   $this->json->error(
                 message: 'Укажите, принадлежащий Вам, спискок!',
-                errors: 501
+                errors: 403
             ); 
         }
 

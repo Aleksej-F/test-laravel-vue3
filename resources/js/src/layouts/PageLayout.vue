@@ -1,7 +1,10 @@
 <template>
-  <!-- <TheHeader /> -->
-  <RouterView />
-  <!-- <TheFooter /> -->
+ 
+    <TheHeader />
+    <RouterView />
+    <!-- <TheFooter /> -->
+ 
+  
 </template>
 
 <script setup>
@@ -12,5 +15,5 @@
 </script>
 
 <style lang="scss" scoped>
-
+  
 </style>

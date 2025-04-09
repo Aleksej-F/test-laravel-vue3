@@ -1,13 +1,22 @@
 <template>
-  
-  <section class="main">
-      <div class="wrap wrap-container">
-        <div class="wrap main-container">
-          <h1>Помощник для планирования и контроля мероприятий, задач, покупок.</h1>
-          
-        </div>
+  <div class="wrap">
+    
+ 
+    <div id="listScreen" class="screens active">
+      <div class="sortMenuOut"></div>
+      <div id="mainListOut" class="light"></div>
+      
+      <div class="addListButton active"
+        title="Добавить список"
+      >
+        <span class="plusWrapper">
+          <span class="plusVert"></span>
+          <span class="plusHoriz"></span>
+        </span>
       </div>
-    </section>
+
+    </div>
+  </div>
    
 </template>
 
@@ -16,28 +25,8 @@
 </script>
 
 <style lang="scss" scoped>
-
-.main{
-  height: 100vh;
-  background-image: url(../assets/img/скрин-1.jpg);
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: center;
-  @media  (max-width: 768px) { 
-    height: 100vw;
-  }
-  &-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    & h1{
-      
-      overflow: clip;
-    }
-    
-  }
-}
+  
 
 
 
-</style>./TheHomeProjects.vue
+</style>

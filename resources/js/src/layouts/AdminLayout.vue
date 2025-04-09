@@ -14,7 +14,7 @@
   import { ref, computed } from 'vue'
   import { RouterView } from 'vue-router'
   import TheHeader from '../components/TheHeader.vue';
-  import Sidebar from '../components/Admin/Sidebar.vue'
+ 
   // import Sidebar from '../components/Admin/Sidebar.vue';
   const isOpen = ref(true) 
   

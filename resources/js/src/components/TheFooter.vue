@@ -1,7 +1,7 @@
 <template>
    <footer>
     <div class="wrap2">
-      <div class="contacts-eco">Торгово-строительная фирма «Эко-Строй»</div>
+      <div class="contacts-eco"></div>
     </div>
   </footer>
 </template>

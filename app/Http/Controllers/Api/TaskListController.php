@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Contracts\ResponseContract;
 
+use App\Http\Resources\TaskListResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use App\Models\TaskList;
@@ -32,16 +33,17 @@ class TaskListController extends Controller
         $taskList = $user->taskList()->get();
 
         foreach ($taskList as $i => $value) {
-            $taskList[$i]['tasks'] = Task::where('list_id', $value['id'])
+            $taskList[$i]['tasks'] = TaskResource::collection(Task::where('list_id', $value['id'])
             ->orderBy('sorting')
-            ->get();
+            ->get());
             // $taskList[$i]['users'] =  $value->users()->get();
             $taskList[$i]['usersCount'] = count($value->users()->get());
         }
+        // 
        
         return $this->json->response(
             data: [
-                'taskLists' =>  $taskList
+                'taskLists' => TaskListResource::collection($taskList) 
             ],
             message: count($taskList) > 0 ? 'Списки задач.' : 'Списки задач не созданы.',
     );

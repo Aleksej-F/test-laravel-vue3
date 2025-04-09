@@ -4,6 +4,7 @@
   >
     <TheLoader/>
     <MessageView/>
+    <ListCreateDialog/>
     <div class="header-logo">
       <RouterLink to="/">
       
@@ -54,13 +55,14 @@
 			
 			<div id="listMenu" class="headerMenu dropdownMenu rounded-2 light"
         :class="{'show':showActive}"
-        @click.stop="clickMenuButton()"
+        @click="clickMenuButton()"
       >
 				<ul>
 					<li  class="menu rounded-2"
             v-for="(item, index ) in listMenu"
             :key="index"
             :class="{'disabled': item.disabled }"
+             @click="item.func"
           >{{ item.name  }}</li>
 					
 				</ul>
@@ -76,17 +78,22 @@
   })
   import TheLoader from './ui/LoaderView.vue';
   import MessageView from "./ui/MessageView.vue"
+  import ListCreateDialog from "./ui/ListCreateDialog.vue"
   import { ref, computed } from 'vue'
   import { useRouter, RouterLink } from 'vue-router'
   const sortActive = ref(false)
   const showActive = ref(false)
   const router = useRouter()
   
+  import { useTaskListStore } from '../stores/taskList.js'
+  const taskLists = useTaskListStore()
+  
   const listMenu = ref ([
     {
       name:'Добавить список',
       link:'/grillato',
-      disabled: false
+      disabled: false,
+      func: taskLists.toggleViewCreateTaskListVisible()
     },
     {
       name:'Удалить всё',
@@ -295,5 +302,72 @@
 		cursor: pointer;
 		background-color: rgb(195 195 195)
 	}
+}
+
+#sortMenuOut{
+  &:hover{
+		cursor: pointer;
+		
+	}
+}
+
+
+.dropdownMenu {
+	position: absolute;
+	top: 2rem;
+	right: .6rem;
+	z-index: 100;
+	opacity: 0;
+	visibility: hidden;
+	background-color: #fff;
+
+	/*border: 1px #dee2e6 solid;*/
+	box-shadow: 0 .5rem 1rem rgba(33, 37, 41, .15);
+
+
+	font-family: var(--system-font);
+	/*pointer-events: none;*/
+	transition: opacity 0.3s;
+}
+
+
+.dropdownMenu.show {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+
+}
+
+
+.dropdownMenu>ul {
+	padding: 0 .5rem;
+	margin: .5rem 0;
+
+}
+
+
+.dropdownMenu>ul>li {
+	list-style-type: none;
+	padding: .5rem 1rem;
+	color: var(--menu-item-color);
+	/*background-color: #fff;*/
+	font-size: 1rem;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+
+.dropdownMenu>ul>li.disabled {
+	pointer-events: none;
+	color: #999;
+}
+
+.dropdownMenu>ul>li:active {
+	background-color: var(--btn-active-color);
+}
+.rounded-2 {
+    /* border: 1px #dee2e6 solid; */
+    /* border-radius: 0.375rem; */
+    border-radius: .7rem;
 }
 </style>

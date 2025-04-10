@@ -17,7 +17,7 @@ export const useUsersStore = defineStore('users', () => {
 
   
  
-  const autchUser = computed(() => state.token !== null)
+  const autchUser = computed(() => token.value !== null)
 
   function setIsAutchUser(status) {
     console.log('setIsLoaderStatus - ', status)

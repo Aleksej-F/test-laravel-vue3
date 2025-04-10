@@ -23,25 +23,37 @@
         >Отмена</div>
         <div class="ok-button button-d" 
         :class="{'disabled': itemTaskListLength == 0}"
-           @click.stop="taskLists.toggleViewCreateTaskListVisible()"
+           @click.stop="okCreateTaskLict()"
         >Ok</div>
       </div>
     </div>
   </div>
 </template>
 <script setup>
-  import { ref, computed } from 'vue'
-  import { useTaskListStore } from '../../stores/taskList.js'
+	import { ref, computed } from 'vue'
+	import { useTaskListStore } from '../../stores/taskList.js'
 
-  const taskLists = useTaskListStore()
-  const props = defineProps(['message'])
- 
-  //ToggleViewCreateTaskListVisible
-  const itemTaskList = ref('')
-  const itemTaskListLength = computed(() => {
-    // console.log(taskLists.taskListSelect.text)
-    return taskLists.taskListSelect.text.length
-  })
+	const taskLists = useTaskListStore()
+	const props = defineProps(['message'])
+	
+	//ToggleViewCreateTaskListVisible
+	const itemTaskList = ref('')
+	const itemTaskListLength = computed(() => {
+		// console.log(taskLists.taskListSelect.text)
+		return taskLists.taskListSelect.text.length
+	})
+	
+	async function okCreateTaskLict() {
+		console.log(taskLists.taskListSignEditing)
+		if (taskLists.taskListSignEditing) {
+			await taskLists.updateTaskListDatabase()
+		} else {
+			await taskLists.setTaskListDatabase()
+		}
+		
+		await taskLists.getTaskLists()
+		taskLists.toggleViewCreateTaskListVisible()
+	}
 </script>
 
 <style lang="scss" scoped>

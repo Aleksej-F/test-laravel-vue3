@@ -17,7 +17,7 @@ class TaskListResource extends JsonResource
         return [
             'id' => $this->id,
             'text' => $this->text,
-            'update_at' => date('d.m.Y H:i:s', strtotime($this->updated_at)),
+            'update_at' => date('d.m.Y H:i:s', strtotime('+3 hours', strtotime($this->updated_at))),
             'tasks' => $this->tasks
         ];
     }

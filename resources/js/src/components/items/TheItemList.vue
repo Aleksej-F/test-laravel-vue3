@@ -1,77 +1,105 @@
 <template>
-  <div class="listItem leftPadding">
-    <div class="sortIcon">
-      <img src="../../assets//img/icons/bars.svg">
-    </div>
-    <div class="contentWrapper uncomplite">
-      <div class="content">
-        <div class="text">{{ item.text }}</div>
-        <div class="smallWrapper">
-          <div class="small">{{ item.update_at }}</div>
-          <div class="small">
-            <div
-              v-if="tasksLength>0"
-            >
-					    Завершено: {{ taskscompleted }} из {{  tasksLength }}
-				    </div>
-            <div
-              v-else
-            >
-              Нет задач
-            </div>
-			      <img src="../../assets//img/icons/angle-right.svg">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="selectItem rounded-2">
-      <img src="../../assets//img/icons/check.svg">
-    </div>
-    <div class="menuWrapper">
-      <div class="headerButtons rounded-2"
-          @click="clickShowVisible()"
-      >
-        <span class="tasksBtnSymbol"></span>
-      </div>
-      <div class="dropdownMenu rounded-2"
-        :class="{'show': showVisible}"
-        @click="clickShowVisible()"
-      >
-        <ul class="rounded-2">
-          <li class="menu rounded-2">Редактировать</li>
-          <li class="menu rounded-2">Удалить</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <div class="listItem leftPadding"
+		@click.stop="clickItemTaskList()"
+  >
+		<div class="sortIcon">
+			<img src="../../assets/img/icons/bars.svg">
+		</div>
+		<div class="contentWrapper uncomplite">
+			<div class="content">
+			<div class="text">{{ item.text }}</div>
+			<div class="smallWrapper">
+				<div class="small">{{ item.update_at }}</div>
+				<div class="small">
+					<div
+					v-if="tasksLength>0"
+					>
+							Завершено: {{ tasksCompleted }} из {{  tasksLength }}
+						</div>
+					<div
+					v-else
+					>
+					Нет задач
+					</div>
+						<img src="../../assets/img/icons/angle-right.svg">
+				</div>
+			</div>
+			</div>
+		</div>
+		<div class="selectItem rounded-2">
+			<img src="../../assets/img/icons/check.svg">
+		</div>
+		<div class="menuWrapper">
+			<div class="headerButtons rounded-2"
+				@click.stop="clickShowVisible()"
+			>
+			<span class="tasksBtnSymbol"></span>
+			</div>
+			<div class="dropdownMenu rounded-2"
+			:class="{'show': showVisible}"
+			@click.stop="clickShowVisible()"
+			>
+			<ul class="rounded-2">
+				<li class="menu rounded-2"
+					@click.stop="editTaskList(item)"
+				>Редактировать</li>
+				<li class="menu rounded-2"
+					@click.stop="deleteTaskList(item.id)"
+				>Удалить</li>
+			</ul>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
-  import { ref, computed } from 'vue'
-  import { useRouter, useRoute } from 'vue-router'
-  
-  const showVisible = ref(false)
-    
-  const route = useRoute()
-  const router = useRouter()
- 
-  const props = defineProps(['item', 'index'])
-  
-  console.log(route.meta.autch)
+	import { ref, computed } from 'vue'
+	import { useRouter, useRoute } from 'vue-router'
+	import { useTaskListStore } from '../../stores/taskList.js'
+
+  	const taskLists = useTaskListStore()
+	
+	const showVisible = ref(false)
+		
+	const route = useRoute()
+	const router = useRouter()
+
+	const props = defineProps(['item', 'index'])
+
+	// console.log(route.meta.autch)
 
 
-  function clickShowVisible() {
-    showVisible.value = !showVisible.value
-  }
+	function clickShowVisible() {
+		showVisible.value = !showVisible.value
+		if (showVisible.value){
+			setTimeout(() => showVisible.value = false, 3000);
+		}
+	}
 
-  const tasksLength = computed(() => {
-    console.log(props.item.tasks.length)
-    return props.item.tasks.length 
-  })
-  const taskscompleted = computed(() => {
-    console.log(props.item.tasks.filter((word) => word.complite).length)
-    return props.item.tasks.filter((word) => word.complite).length 
-  })
+	const tasksLength = computed(() => {
+		console.log(props.item.tasks.length)
+		return props.item.tasks.length 
+	})
+	const tasksCompleted = computed(() => {
+		console.log(props.item.tasks.filter((word) => word.complite).length)
+		return props.item.tasks.filter((word) => word.complite).length 
+	})
+
+	function clickItemTaskList(params) {
+		if (showVisible.value){
+			clickShowVisible()
+		}
+	}
+
+	async function editTaskList(item){
+		
+		taskLists.setTaskListCreate(item)
+		taskLists.toggleViewCreateTaskListVisible()
+	}
+	async function deleteTaskList(id){
+		await taskLists.deleteTaskListDatabase(id)
+		await taskLists.getTaskLists()
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -231,6 +259,11 @@
 
 .dropdownMenu>ul>li:active {
 	background-color: var(--btn-active-color);
+}
+.menu{
+	&:hover{
+		background-color: #d3d0d0;
+	}
 }
 .rounded-2 {
     /* border: 1px #dee2e6 solid; */

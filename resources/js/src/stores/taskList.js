@@ -11,12 +11,18 @@ export const useTaskListStore = defineStore('taskList', () => {
   const taskLists = ref([])
   const newTaskListCreate = ref({
     text: "",
-    tasks: []
+    // tasks: []
   })
   const viewCreateTaskListVisible = ref(false)
   const taskListSelect = ref({text: ""})
+  const taskListSignEditing  = ref(false)
   const taskListLength = computed(() => taskLists.value.length);
-  
+  const taskListSelectDelete = ref([])
+
+  function setTaskListSelectDelete(item) {
+    taskListSelectDelete.value.push(... item)
+    console.log(taskListSelectDelete.value)
+  }
 
   function indexTaskList (id)  { 
     return taskLists.value.findIndex((element)=>{
@@ -70,27 +76,26 @@ export const useTaskListStore = defineStore('taskList', () => {
             })
           return true
       } catch (e) {
-         message.setMessageError( e.data )
+        message.setMessageError( e.data )
         return false
       }
     }
 
-     //сохранение объекта в базу
-    async function setFacilityDatabase() {
+     //сохранение нового списка в базу
+    async function setTaskListDatabase() {
       console.log(user.token)
       // const data = JSON.stringify(user)
       try {
         const config = {
           method: 'post',
-          // maxBodyLength: Infinity,
-          url:`/api/v1/facility`,
+          url:`/api/tasklist`,
           headers: { 
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             Authorization: `Bearer ${user.token}`,
           },
           data: {
-            facility: projectSelect.value
+            taskList: taskListSelect.value
           }
         }
           await axios(config)
@@ -102,28 +107,56 @@ export const useTaskListStore = defineStore('taskList', () => {
             })
           return true
       } catch (e) {
-         message.setMessageError( e )
+        message.setMessageError( e )
         return false
       }
     }
 
-     //обновление объекта в базе
-     async function updateFacilityDatabase() {
-      console.log('user.token')
-      console.log(user.token)
-      // const data = JSON.stringify(user)
+     //обновление списка в базе
+     async function updateTaskListDatabase() {
+      console.log(taskListSelect.value)
       try {
         const config = {
           method: 'put',
           // maxBodyLength: Infinity,
-          url:`/api/v1/facility/${projectSelect.value.id}`,
+          url:`/api/tasklist/${taskListSelect.value.id}`,
           headers: { 
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             Authorization: `Bearer ${user.token}`,
           },
           data: {
-            facility: projectSelect.value
+            taskList: taskListSelect.value
+          }
+        }
+          await axios(config)
+            .then(({data})=>{
+              console.log(data)
+              message.setMessage(data)
+              
+            })
+          return true
+      } catch (e) {
+         message.setMessageError( e )
+        return false
+      }
+    }
+
+    //удаление списка из базы
+    async function deleteTaskListDatabase(id) {
+     
+      try {
+        const config = {
+          method: 'delete',
+          // maxBodyLength: Infinity,
+          url:`/api/tasklist/${id}`,
+          headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
+          },
+          data: {
+            "taskList": taskListSelectDelete.value
           }
         }
           await axios(config)
@@ -140,48 +173,30 @@ export const useTaskListStore = defineStore('taskList', () => {
       }
     }
 
-    //удаление объекта из базы
-    async function deleteFacilityDatabase(id) {
-      console.log('user.token')
-      console.log(user.token)
-      // const data = JSON.stringify(user)
-      try {
-        const config = {
-          method: 'delete',
-          // maxBodyLength: Infinity,
-          url:`/api/v1/facility/${id}`,
-          headers: { 
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
-          
-        }
-          await axios(config)
-            .then(({data})=>{
-              console.log(data)
-              message.setMessage(data)
-              // projectsList.value = [data.data.facility]
-              // projectSelect.value = {... data.data.facility}
-            })
-          return true
-      } catch (e) {
-         message.setMessageError( e )
-        return false
-      }
-    }
-
-     //запись нулевого объекта
+     //запись нулевого списка
     async function setNewTaskListCreate() {
       // projectsList.value = [newTaskListCreate.value]
       taskListSelect.value = {... newTaskListCreate.value}
+      taskListSignEditing.value = false
     }
     
-     
+     //запись редактируемого списка
+     async function setTaskListCreate(item) {
+      // projectsList.value = [newTaskListCreate.value]
+      taskListSelect.value = {... item}
+      taskListSignEditing.value = true
+    }
+     //изменение видимости диалогового окна
     function toggleViewCreateTaskListVisible(){
-      console.log('dfgdfg')
+      if (viewCreateTaskListVisible.value) {
+        setNewTaskListCreate() // обнуление при закрытии
+      }
       viewCreateTaskListVisible.value = !viewCreateTaskListVisible.value
       console.log(viewCreateTaskListVisible.value)
+    }
+
+    function settaskListSignEditing(attribute){
+      taskListSignEditing.value = attribute
     }
 
   return { 
@@ -190,10 +205,19 @@ export const useTaskListStore = defineStore('taskList', () => {
     taskListSelect,
     taskListLength,
     viewCreateTaskListVisible,
+    taskListSignEditing,
+    taskListSelectDelete,
+    setTaskListSelectDelete,
+    settaskListSignEditing,
     indexTaskList,
     getTaskLists,
     getTaskList,
+    updateTaskListDatabase,
+    deleteTaskListDatabase,
     toggleViewCreateTaskListVisible,
-    setNewTaskListCreate
+    setNewTaskListCreate,
+    setTaskListCreate,
+    setTaskListDatabase,
+
   }
 })

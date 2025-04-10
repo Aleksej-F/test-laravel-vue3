@@ -59,11 +59,12 @@
       >
 				<ul>
 					<li  class="menu rounded-2"
-            v-for="(item, index ) in listMenu"
-            :key="index"
-            :class="{'disabled': item.disabled }"
-             @click="item.func"
-          >{{ item.name  }}</li>
+						v-for="(item, index ) in listMenu"
+						:key="index"
+						:class="{'disabled': item.disabled }"
+						@click.stop="clickImemMenu(item.func())"
+						
+					><p v-if="item.visible">{{ item.name  }}</p></li>
 					
 				</ul>
 			</div>
@@ -73,77 +74,124 @@
 </template>
 
 <script setup>
-  defineProps({
-    
-  })
-  import TheLoader from './ui/LoaderView.vue';
-  import MessageView from "./ui/MessageView.vue"
-  import ListCreateDialog from "./ui/ListCreateDialog.vue"
-  import { ref, computed } from 'vue'
-  import { useRouter, RouterLink } from 'vue-router'
-  const sortActive = ref(false)
-  const showActive = ref(false)
-  const router = useRouter()
-  
-  import { useTaskListStore } from '../stores/taskList.js'
-  const taskLists = useTaskListStore()
-  
-  const listMenu = ref ([
-    {
-      name:'Добавить список',
-      link:'/grillato',
-      disabled: false,
-      func: taskLists.toggleViewCreateTaskListVisible()
-    },
-    {
-      name:'Удалить всё',
-      link:'/rockfon',
-      disabled: true
-    },
-    {
-      name:'Удалить завершённые',
-      link:'/acoustics',
-      disabled: true
-    },
-    {
-      name:'Темная тема',
-      link:'/acoustics',
-      disabled: false
-    },
-    {
-      name:'Светлая тема',
-      link:'/acoustics',
-      disabled: false
-    },
-  ])
+	defineProps({
+		
+	})
+	import TheLoader from './ui/LoaderView.vue';
+	import MessageView from "./ui/MessageView.vue"
+	import ListCreateDialog from "./ui/ListCreateDialog.vue"
+	import { ref, computed } from 'vue'
+	import { useRouter, RouterLink } from 'vue-router'
+	const sortActive = ref(false)
+	const showActive = ref(false)
+	const router = useRouter()
+	
+	import { useTaskListStore } from '../stores/taskList.js'
+	import { useUsersStore } from '../stores/Users.js'
+	const taskLists = useTaskListStore()
+	const user = useUsersStore()
+	const existence = computed(() => taskLists.taskLists.length == 0)
+	const userAutch = computed(() => user.token !== null)
+	console.log(userAutch.value)
+	console.log(user.autchUser)
+	const listMenu = ref ([
+		{
+			name:'Добавить список',
+			link:'/',
+			disabled: false,
+			visible: true,
+			func: taskLists.toggleViewCreateTaskListVisible
+		},
+		{
+			name:'Удалить всё',
+			link:'/',
+			disabled: existence,
+			visible: true,
+			func: clickTaskListsDelete
+		},
+		{
+			name:'Удалить завершённые',
+			link:'/',
+			disabled: true,
+			visible: true
+		},
 
+		// {
+		// 	name:'Темная тема',
+		// 	link:'/acoustics',
+		// 	disabled: false,
+		//visible:false
+		// },
+		// {
+		// 	name:'Светлая тема',
+		// 	link:'/acoustics',
+		// 	disabled: false,
+		//visible:false
+		// },
+		{
+			name:'Выйти',
+			link:'/acoustics',
+			disabled: false,
+			visible: userAutch.value,
+			func: clickUserLogin
+		},
+		{
+			name:'Войти',
+			link:'/login',
+			disabled: false,
+			visible: !userAutch.value,
+			func: clickUserLogin
+		},
+	])
+	
 
-  function clickElementMenu(link){
-   
-    if (window.innerWidth > 480){
-          router.push(link)
-    }
-    
-  }
+	function clickElementMenu(link){
+		
+		if (window.innerWidth > 480){
+				router.push(link)
+		}
+		
+	}
 
-  function clickMenuButton() {
-    clickMenuNoVisible()
-    showActive.value = !showActive.value
-    
-    
-  }
-  function clickMenuNoVisible() {
-    if (showActive.value) {
-      showActive.value = false
-    }
-    if (sortActive.value) {
-      sortActive.value = false
-    }
-  }
-  function clickSortButton() {
-    sortActive.value = !sortActive.value
-    
-  }
+	function clickMenuButton() {
+		clickMenuNoVisible()
+		showActive.value = !showActive.value
+		console.log()
+		if (showActive.value){
+			setTimeout(() => showActive.value = false, 3000);
+		}
+	}
+
+	function clickMenuNoVisible() {
+		if (showActive.value) {
+			showActive.value = false
+		}
+		if (sortActive.value) {
+			sortActive.value = false
+		}
+	}
+
+	function clickSortButton() {
+		sortActive.value = !sortActive.value
+		if (sortActive.value){
+			setTimeout(() => sortActive.value = false, 3000);
+		}
+	}
+
+	function clickImemMenu(itemFunc){
+			clickMenuNoVisible()
+			(itemFunc)()
+	}
+
+	async function clickTaskListsDelete(params) {
+		taskLists.setTaskListSelectDelete(taskLists.taskLists.map((num) => num.id))
+		await taskLists.deleteTaskListDatabase(1)
+		await taskLists.getTaskLists()
+	}
+
+	function clickUserLogin(){
+		router.push({ name: 'login',} )
+	}
 </script>
 
 <style lang="scss" scoped>
@@ -158,7 +206,7 @@
     height: var(--header-height);
     z-index: 50;
     @media  (max-width: 768px) { 
-      max-width: 90vw;
+      max-width: 100vw;
     }
 
   }
@@ -354,8 +402,12 @@
 	font-size: 1rem;
 	user-select: none;
 	-webkit-user-select: none;
+	
 }
-
+p{
+		padding: 0;
+		margin: 0;
+	}
 
 .dropdownMenu>ul>li.disabled {
 	pointer-events: none;

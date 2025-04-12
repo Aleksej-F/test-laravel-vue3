@@ -11,11 +11,11 @@
         </svg>
       </div>
     </div>
-    <TheHomeProjects />
+   
   </div>
 </template>
 <script setup>
-  import TheHomeProjects from '../../components/TheHomeProjects.vue';
+ 
   import { useRouter, useRoute } from 'vue-router'
   
   const router = useRouter()

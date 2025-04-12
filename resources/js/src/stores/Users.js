@@ -19,9 +19,9 @@ export const useUsersStore = defineStore('users', () => {
  
   const autchUser = computed(() => token.value !== null)
 
-  function setIsAutchUser(status) {
-    console.log('setIsLoaderStatus - ', status)
-    autchUser.value = status
+  function setToken(token) {
+    console.log('setIsLoaderStatus - ', token)
+    token.value = token
   }
    
   //регистрация на сайте
@@ -45,6 +45,7 @@ export const useUsersStore = defineStore('users', () => {
           const res = axios(config)
           .then((response)=>{
             autchUser.value = true
+            token.value = response.data.data.token
             localStorage.setItem('userAutch', true);
             localStorage.setItem('token', response.data.data.token);
             return true  
@@ -82,11 +83,12 @@ export const useUsersStore = defineStore('users', () => {
       const reg = await axios.get('/sanctum/csrf-cookie')
         .then(response =>{
           const res = axios(config)
-          .then((data)=>{
-            console.log("getloginUser - ", data )
+          .then((response)=>{
+            console.log("getloginUser - ", response )
             autchUser.value = true
+            token.value = response.data.data.token
             localStorage.setItem('userAutch', true);
-            localStorage.setItem('token', data.data.data.token);
+            localStorage.setItem('token', response.data.data.token);
             return true
           })
           .catch( ({response})=> {
@@ -187,7 +189,7 @@ export const useUsersStore = defineStore('users', () => {
     token,
     pageName,
     
-    setIsAutchUser,
+    setToken,
     setRegistrationUser,
     setLogInUser,
     setLogout,

@@ -104,23 +104,10 @@
                        @click.stop="sliderToScreen(sliderItem)"
 
                     >
-                      <TheItemProjectsSlider 
-                        v-for="(item, index ) in getSliderList(sliderItem)" 
-                        :key="index"
-                        :item="item"
-                        :sliderLength="itemProject.sliders.length"
-                        :objectsId = "itemProject.id"
-                      />
+                     
                        
                     </div>  
-                    <TheItemProjectsSlider 
-                      @click.stop="sliderToScreen(sliderItem)"
-                      class="project-slayder__item_visible"
-                      :class="classObject"
-                      :item="activeSlider"
-                      :sliderLength="itemProject.sliders.length"
-                      :objectsId = "itemProject.id"
-                      /> 
+                   
                 </div>
                 <div class="block-button">
                   
@@ -212,9 +199,9 @@
     import { useRouter, useRoute } from 'vue-router'
     import { ref, computed } from 'vue'
     import { useProjectsStore } from '../../stores/projects.js'
-    import TheItemProjectsSlider from '../../components/items/TheItemProjectsSlider.vue'
+    
     import Button from '../../components/ui/Button.vue'
-    import VideoSelected from '../../components/Admin/VideoSelected.vue'
+    
     import { onBeforeMount,onMounted, onUnmounted } from 'vue'
     import { useFacilitiesStore } from '../../stores/facilities.js'
     import { useImgLoadingStore } from '../../stores/imgLoading.js'

@@ -33,6 +33,8 @@ export const useTaskListStore = defineStore('taskList', () => {
     //получение списков
     async function getTaskLists() {
       // const data = JSON.stringify(user)
+      console.log(user.token)
+      console.log(user.autchUser)
       try {
         const config = {
           method: 'get',

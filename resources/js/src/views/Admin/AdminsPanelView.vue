@@ -4,12 +4,12 @@
     class="text"
     @click.stop="getCatalogs"
   >
-    Панель администратора {{  iconsMap['vue.js']}}
+    Панель администратора 
    
   </div>
 </template>
 <script setup>
-  import TheHomeProjects from '../../components/TheHomeProjects.vue';
+  
   import { useImgLoadingStore } from '../../stores/imgLoading.js'
   const imgLoadingStore = useImgLoadingStore()
   

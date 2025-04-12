@@ -152,7 +152,7 @@
     import { useFacilitiesStore } from '../../stores/facilities.js'
     import { useImgLoadingStore } from '../../stores/imgLoading.js'
     import { useSliderFacilitiyStore } from '../../stores/sliderFacilitiy.js'
-    import ImgSelected from '../../components/Admin/ImgSelected.vue'
+  
     import Button from '../../components/ui/Button.vue'
     
     

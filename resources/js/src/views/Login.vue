@@ -83,7 +83,7 @@
       authorize.value = true
       setTimeout(() => 
         {
-          router.push({ name: 'admins-panel'})
+          router.push({ name: 'home'})
         }, 3000);
     }
   }

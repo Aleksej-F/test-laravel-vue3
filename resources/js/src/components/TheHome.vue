@@ -2,7 +2,10 @@
   <div >
     
  
-    <div id="listScreen" class="screens active">
+    <div id="listScreen" class="screens active"
+     
+    > 
+    <!-- @click.stop="setNoVisibleMenu()" -->
       <div class="wrap">
         <div class="sortMenuOut"></div>
         <div id="mainListOut" class="light">
@@ -13,13 +16,14 @@
               v-for="(item, index ) in taskLists.taskLists" 
               :key="+item.id"
               :item="item"
+              :menuVisible = "menuVisible"
             />
           </div>
           <div class="list-group"
             v-else
           >
             <p >
-              Для просмотра списков авторизуйтесь.
+              {{ tesxNoTaskLists }}
             </p>
           </div>
         </div>
@@ -49,6 +53,16 @@
   const taskLists = useTaskListStore()
   const user = useUsersStore()
 
+  const tesxNoTaskLists = computed(() => {
+    if(user.autchUser){
+      return "У Вас нет списков. Создайте их."
+    } else {
+      return "Для просмотра списков авторизуйтесь."
+    }
+  
+  })
+
+  const menuVisible = ref(false)
   onMounted(async() => {
     console.log('user.autchUser - ', user.autchUser)
     if (user.autchUser) {
@@ -56,7 +70,11 @@
     }
     
   })
-  
+  function setNoVisibleMenu() {
+    // console.log('menuVisible.value - ', menuVisible.value)
+    menuVisible.value = true
+    setTimeout(() => menuVisible.value = false, 1000);
+  }
 
 </script>
 

@@ -8,7 +8,8 @@ export const useMessageStore = defineStore('message', () => {
   const message = ref(false)
   const error = ref("")
   const displayed = ref(false)
-  
+  const menuVisible = ref(false)
+
   const doubleCount = computed(() => count.value * 2)
   
   function setMessage(data) {
@@ -63,13 +64,20 @@ export const useMessageStore = defineStore('message', () => {
   function setMessageVisibleFalse(){
     message.value = null
   }
+
+  function setMenuVisible(params) {
+    menuVisible.value = true
+    setTimeout(() => menuVisible.value = false, 1000);
+  }
   return { 
     url, 
     message, 
     error,
     displayed,
+    menuVisible,
     setMessage,
     setMessageVisibleFalse,
-    setMessageError 
+    setMessageError,
+    setMenuVisible
   }
 })

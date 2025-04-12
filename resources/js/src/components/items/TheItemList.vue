@@ -1,7 +1,7 @@
 <template>
-  <div class="listItem leftPadding"
-		@click.stop="clickItemTaskList()"
-  >
+	<div class="listItem leftPadding"
+		@click.stop="clickItemTaskList"
+	>
 		<div class="sortIcon">
 			<img src="../../assets/img/icons/bars.svg">
 		</div>
@@ -53,10 +53,12 @@
 </template>
 
 <script setup>
-	import { ref, computed } from 'vue'
+	import { ref, computed, watch } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
 	import { useTaskListStore } from '../../stores/taskList.js'
-
+	import { useMessageStore } from '../../stores/message.js'
+	
+	const message = useMessageStore()
   	const taskLists = useTaskListStore()
 	
 	const showVisible = ref(false)
@@ -64,22 +66,28 @@
 	const route = useRoute()
 	const router = useRouter()
 
-	const props = defineProps(['item', 'index'])
+	const props = defineProps(['item', 'index', 'menuVisible'])
 
+
+
+	
 	// console.log(route.meta.autch)
-
+	watch(()=> message.menuVisible, (menuVisible) => {
+		// console.log(' item props.menuVisible - ', menuVisible)
+		if (menuVisible) {
+			showVisible.value = false
+		}
+	})
 
 	function clickShowVisible() {
 		showVisible.value = !showVisible.value
-		if (showVisible.value){
-			setTimeout(() => showVisible.value = false, 3000);
-		}
 	}
 
 	const tasksLength = computed(() => {
 		console.log(props.item.tasks.length)
 		return props.item.tasks.length 
 	})
+
 	const tasksCompleted = computed(() => {
 		console.log(props.item.tasks.filter((word) => word.complite).length)
 		return props.item.tasks.filter((word) => word.complite).length 
@@ -89,13 +97,15 @@
 		if (showVisible.value){
 			clickShowVisible()
 		}
+		router.push({ name: 'project', params: { id: props.item.id } })
+		
 	}
 
 	async function editTaskList(item){
-		
 		taskLists.setTaskListCreate(item)
 		taskLists.toggleViewCreateTaskListVisible()
 	}
+	
 	async function deleteTaskList(id){
 		await taskLists.deleteTaskListDatabase(id)
 		await taskLists.getTaskLists()

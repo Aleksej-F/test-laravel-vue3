@@ -1,6 +1,6 @@
 <template>
  <div class="wrap2" 
-    @click.stop="clickMenuNoVisible()"
+   
   >
     <TheLoader/>
     <MessageView/>
@@ -62,7 +62,7 @@
 						v-for="(item, index ) in listMenu"
 						:key="index"
 						:class="{'disabled': item.disabled }"
-						@click.stop="clickImemMenu(item.func())"
+						@click.stop="clickImemMenu(item.func)"
 						
 					><p v-if="item.visible">{{ item.name  }}</p></li>
 					
@@ -80,7 +80,7 @@
 	import TheLoader from './ui/LoaderView.vue';
 	import MessageView from "./ui/MessageView.vue"
 	import ListCreateDialog from "./ui/ListCreateDialog.vue"
-	import { ref, computed } from 'vue'
+	import { ref, computed, watch } from 'vue'
 	import { useRouter, RouterLink } from 'vue-router'
 	const sortActive = ref(false)
 	const showActive = ref(false)
@@ -88,6 +88,9 @@
 	
 	import { useTaskListStore } from '../stores/taskList.js'
 	import { useUsersStore } from '../stores/Users.js'
+	import { useMessageStore } from '../stores/message.js'
+	
+	const message = useMessageStore()
 	const taskLists = useTaskListStore()
 	const user = useUsersStore()
 	const existence = computed(() => taskLists.taskLists.length == 0)
@@ -143,7 +146,13 @@
 			func: clickUserLogin
 		},
 	])
-	
+	watch(()=> message.menuVisible, (menuVisible) => {
+		// console.log('heder props.menuVisible - ', menuVisible)
+		if (menuVisible) {
+			showActive.value = false
+			sortActive.value = false
+		}
+	})
 
 	function clickElementMenu(link){
 		
@@ -151,15 +160,6 @@
 				router.push(link)
 		}
 		
-	}
-
-	function clickMenuButton() {
-		clickMenuNoVisible()
-		showActive.value = !showActive.value
-		console.log()
-		if (showActive.value){
-			setTimeout(() => showActive.value = false, 3000);
-		}
 	}
 
 	function clickMenuNoVisible() {
@@ -171,16 +171,20 @@
 		}
 	}
 
+	function clickMenuButton() {
+		sortActive.value = false
+		showActive.value = !showActive.value
+		console.log()
+		
+	}
+
 	function clickSortButton() {
 		sortActive.value = !sortActive.value
-		if (sortActive.value){
-			setTimeout(() => sortActive.value = false, 3000);
-		}
 	}
 
 	function clickImemMenu(itemFunc){
-			clickMenuNoVisible()
-			(itemFunc)()
+		clickMenuNoVisible()
+		itemFunc()
 	}
 
 	async function clickTaskListsDelete(params) {

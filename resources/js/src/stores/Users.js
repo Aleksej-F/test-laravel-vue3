@@ -44,9 +44,7 @@ export const useUsersStore = defineStore('users', () => {
           console.log(response)
           const res = axios(config)
           .then((response)=>{
-            autchUser.value = true
             token.value = response.data.data.token
-            localStorage.setItem('userAutch', true);
             localStorage.setItem('token', response.data.data.token);
             return true  
           })
@@ -85,9 +83,7 @@ export const useUsersStore = defineStore('users', () => {
           const res = axios(config)
           .then((response)=>{
             console.log("getloginUser - ", response )
-            autchUser.value = true
             token.value = response.data.data.token
-            localStorage.setItem('userAutch', true);
             localStorage.setItem('token', response.data.data.token);
             return true
           })
@@ -126,8 +122,6 @@ export const useUsersStore = defineStore('users', () => {
           await axios(config)
           .then((response)=>{
             token.value = null
-            autchUser.value = false
-            localStorage.removeItem('userAutch');
             localStorage.removeItem('token');
           })
           

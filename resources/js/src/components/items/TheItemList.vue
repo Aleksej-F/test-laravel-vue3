@@ -14,16 +14,21 @@
 				<div class="small">{{ item.update_at }}</div>
 				<div class="small">
 					<div
-					v-if="tasksLength>0"
+						v-if="tasksLength == 0"
 					>
-							Завершено: {{ tasksCompleted }} из {{  tasksLength }}
-						</div>
-					<div
-					v-else
-					>
-					Нет задач
+						Нет задач
 					</div>
-						<img src="../../assets/img/icons/angle-right.svg">
+					<div
+						v-else-if="tasksCompleted==tasksLength"
+					>
+						Задачи завершены
+					</div>
+					<div
+						v-else
+					>
+						Завершено: {{ tasksCompleted }} из {{  tasksLength }}
+					</div>
+					<img src="../../assets/img/icons/angle-right.svg">
 				</div>
 			</div>
 			</div>
@@ -34,21 +39,18 @@
 		<div class="menuWrapper"
 			@click.stop="clickShowVisible()"
 		>
-			<div class="headerButtons rounded-2"
-				
-			>
+			<div class="headerButtons rounded-2">
 				<span class="tasksBtnSymbol"></span>
 			</div>
 			<div class="dropdownMenu rounded-2"
 				:class="{'show': showVisible}"
-				
 			>
 				<ul class="rounded-2">
 					<li class="menu rounded-2"
 						@click.stop="editTaskList(item)"
 					>Редактировать</li>
 					<li class="menu rounded-2"
-						
+						@click.stop="deleteTaskList(item.id)"
 					>Удалить</li>
 				</ul>
 			</div>
@@ -61,10 +63,12 @@
 	import { useRouter, useRoute } from 'vue-router'
 	import { useTaskListStore } from '../../stores/taskList.js'
 	import { useMessageStore } from '../../stores/message.js'
-	
+	import { useDialogStore } from "../../stores/dialog.js"
+
 	const message = useMessageStore()
   	const taskLists = useTaskListStore()
-	
+	const dialog = useDialogStore()
+
 	const showVisible = ref(false)
 		
 	const route = useRoute()
@@ -84,36 +88,41 @@
 	})
 
 	function clickShowVisible() {
-		showVisible.value = !showVisible.value
+		message.setMenuVisible();
+		setTimeout(() => {
+			showVisible.value = !showVisible.value;
+		}, 100)
 	}
 
 	const tasksLength = computed(() => {
-		console.log(props.item.tasks.length)
 		return props.item.tasks.length 
 	})
 
 	const tasksCompleted = computed(() => {
-		console.log(props.item.tasks.filter((word) => word.complite).length)
 		return props.item.tasks.filter((word) => word.complite).length 
 	})
 
 	function clickItemTaskList(params) {
-		// if (showVisible.value){
-		// 	clickShowVisible()
-		// }
 		message.setMenuVisible()
-		  router.push({ name: 'taskList', params: { id: props.item.id } })
+		router.push({ name: 'taskList', params: { id: props.item.id } })
 		
 	}
 
 	async function editTaskList(item){
+		message.setMenuVisible()
 		taskLists.setTaskListCreate(item)
 		taskLists.toggleViewCreateTaskListVisible()
 	}
 	
 	async function deleteTaskList(id){
-		await taskLists.deleteTaskListDatabase(id)
-		await taskLists.getTaskLists()
+		dialog.setLayout('TheItemTaskDeleteVsDialog')
+		dialog.toggleViewDialogVisible()
+		message.setMenuVisible();
+		const result = await dialog.setDialogeDelete(true)
+		if (result) {
+			await taskLists.deleteTaskListDatabase(id)
+			await taskLists.getTaskLists()
+		}
 	}
 </script>
 
@@ -214,13 +223,13 @@
 	height: 2rem;
 	pointer-events: none;
 }
+.menuWrapper:hover {
+	cursor: pointer;
 
-.headerButtons{
-  
-  &:hover{
-    cursor: pointer;
-    transform: scale(1.5, 1.5);
-  }
+	& .headerButtons{
+		cursor: pointer;
+		transform: scale(1.5, 1.5);
+	}
 }
 .dropdownMenu {
 	position: absolute;
@@ -277,6 +286,7 @@
 }
 .menu{
 	&:hover{
+		cursor: pointer;
 		background-color: #d3d0d0;
 	}
 }

@@ -9,6 +9,7 @@ export const useMessageStore = defineStore('message', () => {
   const error = ref("")
   const displayed = ref(false)
   const menuVisible = ref(false)
+  
 
   const doubleCount = computed(() => count.value * 2)
   
@@ -72,6 +73,7 @@ export const useMessageStore = defineStore('message', () => {
   return { 
     url, 
     message, 
+   
     error,
     displayed,
     menuVisible,

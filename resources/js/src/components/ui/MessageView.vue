@@ -3,8 +3,11 @@
     v-if="message.message"
     @click.stop="visibleFalse"
   >
+  <!-- v-if="message.message" -->
     <div class="cont-message-cont">
-      <div class="cont-message-view">
+      <div class="cont-message-view"
+        :class="{'task': taskRout }"
+      >
         <p 
           :class="classObject"
           v-html="message.message.mes"
@@ -17,8 +20,11 @@
 <script setup>
   import { ref, computed } from 'vue'
   import { useMessageStore } from '../../stores/message.js'
+  import { useRoute} from 'vue-router'
   const props = defineProps(['message'])
   const message = useMessageStore()
+  
+  const route = useRoute()
   
   const classObject = computed(()=> {
     const errClass = {
@@ -28,6 +34,12 @@
     return errClass
   })
 
+
+  
+  const taskRout = computed(()=> {
+    console.log(route.name)
+    return route.name == "taskList" 
+  })
     
     function visibleFalse(){
       message.setMessageVisibleFalse()
@@ -71,6 +83,10 @@
     text-align: center;
     color: var(--color-white);
     padding: 15px;
+    &.task{
+      background-color: var(--main-task-color);
+      color: aliceblue;
+    }
     p{
       margin: 0;
     }

@@ -62,7 +62,7 @@
 
   const menuVisible = ref(false)
   onMounted(async() => {
-    console.log('user.autchUser - ', user.autchUser)
+    // console.log('user.autchUser - ', user.autchUser)
     if (user.autchUser) {
       await taskLists.getTaskLists()
     }

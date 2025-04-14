@@ -4,6 +4,7 @@
 	>
 		<TheLoader/>
 		<MessageView/>
+		<DialogView/>
 		<ListCreateDialog/>
 		<div class="header-logo">
 			<RouterLink to="/">
@@ -78,11 +79,13 @@
 	defineProps({
 		
 	})
-	import TheLoader from './ui/LoaderView.vue';
+	import TheLoader from './ui/LoaderView.vue'
 	import MessageView from "./ui/MessageView.vue"
 	import ListCreateDialog from "./ui/ListCreateDialog.vue"
+	import DialogView from "./ui/DialogView.vue"
 	import { ref, computed, watch } from 'vue'
 	import { useRouter, RouterLink } from 'vue-router'
+	
 	const sortActive = ref(false)
 	const showActive = ref(false)
 	const router = useRouter()
@@ -90,21 +93,23 @@
 	import { useTaskListStore } from '../stores/taskList.js'
 	import { useUsersStore } from '../stores/Users.js'
 	import { useMessageStore } from '../stores/message.js'
-	
+	import { useDialogStore } from "../stores/dialog.js"
+
 	const message = useMessageStore()
 	const taskLists = useTaskListStore()
 	const user = useUsersStore()
+	const dialog = useDialogStore()
+
 	const existence = computed(() => taskLists.taskLists.length == 0)
 	const userAutch = computed(() => user.token !== null)
-	console.log(userAutch.value)
-	console.log(user.autchUser)
+	const listComleted = computed(() => taskLists.getTaskListsCompleted.length == 0)
 	const listMenu = ref ([
 		{
 			name:'Добавить список',
 			link:'/',
 			disabled: false,
 			visible: true,
-			func: taskLists.toggleViewCreateTaskListVisible
+			func: clickAddTaskList
 		},
 		{
 			name:'Удалить всё',
@@ -116,8 +121,9 @@
 		{
 			name:'Удалить завершённые',
 			link:'/',
-			disabled: true,
-			visible: true
+			disabled: listComleted,
+			visible: true,
+			func: clickTaskListsDeleteCompleted
 		},
 
 		// {
@@ -189,9 +195,32 @@
 	}
 
 	async function clickTaskListsDelete(params) {
-		taskLists.setTaskListSelectDelete(taskLists.taskLists.map((num) => num.id))
-		await taskLists.deleteTaskListDatabase(num.id)
-		await taskLists.getTaskLists()
+		dialog.setLayout('TheItemTaskListDeleteAllVsDialog')
+		dialog.toggleViewDialogVisible()
+		message.setMenuVisible();
+		const result = await dialog.setDialogeDelete(true)
+		if (result) {
+			taskLists.setTaskListSelectDelete(taskLists.taskLists.map((num) => num.id))
+			await taskLists.deleteTaskListDatabase(num.id)
+			await taskLists.getTaskLists()
+		}
+	}
+	async function clickTaskListsDeleteCompleted(params) {
+		dialog.setLayout('TheItemTaskListDeleteComletVsDialog')
+		dialog.toggleViewDialogVisible()
+		message.setMenuVisible();
+		const result = await dialog.setDialogeDelete(true)
+		if (result) {
+			taskLists.setTaskListSelectDelete(taskLists.getTaskListsCompleted.map((num) => num.id))
+			await taskLists.deleteTaskListDatabase(taskLists.getTaskListsCompleted[0].id)
+			await taskLists.getTaskLists()
+		}
+	}
+
+	
+	function clickAddTaskList(params) {
+		taskLists.setNewTaskListCreate()
+		taskLists.toggleViewCreateTaskListVisible()
 	}
 
 	function clickUserLogin(){

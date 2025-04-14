@@ -1,79 +1,91 @@
 <template>
-  <div class="dialog-wrapper"
-  v-if="tasks.viewCreateTaskVisible"
-  >
-    <div class="dialog-black-box"></div>
-    <div class="dialog-box rounded-2 light">
-      <div class="dialog-content">
-        <h4>Новая  задача:</h4>
-        <div class="dialogAlertField">
-          <p class="alertMessageTitle" style="color: rgb(153, 153, 153);">
-            {{itemTaskTextLength}} из 150 символов
-          </p>
-        </div>
-        <textarea class="dialog-textarea" rows="4" placeholder="Начните вводить" maxlength="150"
-          v-model="tasks.taskSelect.text"
-        >
-          
-        </textarea>
-		  <div class="dialogAlertField">
-          <p class="alertMessageTitle" style="color: rgb(153, 153, 153);">
-            {{itemTaskSmallTextLength}} из 150 символов
-          </p>
-        </div>
-        <textarea class="dialog-textarea" rows="4" placeholder="Коментарий" maxlength="150"
-          v-model="tasks.taskSelect.smallText"
-        >
-          
-        </textarea>
-      </div>
-      <div class="dialog-buttons">
-        <div class="cancel-button button-d"
-           @click.stop="tasks.toggleViewCreateTaskVisible()"
-        >Отмена</div>
-        <div class="ok-button button-d" 
-        :class="{'disabled': itemTaskTextLength == 0}"
-           @click.stop="okCreateTask()"
-        >Ok</div>
-      </div>
-    </div>
-  </div>
+	<div class="dialog-wrapper"
+		v-if="dialog.visible"
+	>
+		<div class="dialog-black-box"></div>
+		<div class="dialog-box rounded-2 light">
+			
+			<component :is="layout" />
+			
+			<div class="dialog-buttons">
+				<div class="cancel-button button-d"
+					@click.stop="noClickDialog()"
+				>Отмена</div>
+				<div class="ok-button button-d" 
+					v-if="dialog.dialogeDelete"
+					@click.stop="yesClickDialog()"
+				>Да</div>
+				<div class="ok-button button-d" 
+					:class="{'disabled': tasks.getTaskSelectTextLength == 0}"
+					@click.stop="okClickDialog()"
+					v-else
+				>Ok</div>
+				
+			</div>
+		</div>
+	</div>
 </template>
 <script setup>
 	import { useRouter, useRoute } from 'vue-router'
-	import { ref, computed } from 'vue'
+	import { ref, computed, shallowRef } from 'vue'
 	import { useTasksStore } from '../../stores/tasks.js'
-	import { useTaskListStore } from "../../stores/taskList.js";
+	import { useTaskListStore } from "../../stores/taskList.js"
+	import { useDialogStore } from "../../stores/dialog.js"
+	import TheItemTaskNewVsDialog from '../items/TheItemTaskNewVsDialog.vue'
+	import TheItemTaskDeleteVsDialog from '../items/TheItemTaskDeleteVsDialog.vue'
+	import TheItemTaskDeleteComletVsDialog from '../items/TheItemTaskDeleteComletVsDialog.vue'
+	import TheItemTaskDeleteAllVsDialog from '../items/TheItemTaskDeleteAllVsDialog.vue'
+	import TheItemTaskListDeleteAllVsDialog from '../items/TheItemTaskListDeleteAllVsDialog.vue'
+	import TheItemTaskListDeleteComletVsDialog from '../items/TheItemTaskListDeleteComletVsDialog.vue'
+	import TheItemTaskListDeleteVsDialog from '../items/TheItemTaskListDeleteVsDialog.vue'
 	
 	const route = useRoute()
 
 	const taskLists = useTaskListStore();
 	const tasks = useTasksStore()
-	const props = defineProps(['message'])
-	
+	const props = defineProps(['message', ])
+	const dialog = useDialogStore() 
 	
 	const itemTask = ref('')
-	const itemTaskTextLength = computed(() => {
-		// console.log(taskLists.taskListSelect.text)
-		return tasks.taskSelect.text.length
-	})
 
-	const itemTaskSmallTextLength = computed(() => {
-		// console.log(taskLists.taskListSelect.text)
-		return tasks.taskSelect.smallText.length
-	})
+	const layoutComponent = shallowRef( {
+		TheItemTaskNewVsDialog, 
+		TheItemTaskDeleteVsDialog,
+		TheItemTaskDeleteAllVsDialog,
+		TheItemTaskDeleteComletVsDialog,
+		TheItemTaskListDeleteAllVsDialog,
+		TheItemTaskListDeleteComletVsDialog,
+		TheItemTaskListDeleteVsDialog
+  	})
+
+	const layout = computed(() => {
+		return layoutComponent.value[dialog.layout]}
+	)
+
+	function noClickDialog() {
+		dialog.toggleViewDialogVisible()
+		dialog.setButtonClick({ok:false})
+	}
 	
-	async function okCreateTask() {
+	function yesClickDialog() {
+		dialog.toggleViewDialogVisible()
+		dialog.setButtonClick({ok:true})
+	}
+
+	async function okClickDialog() {
 		console.log(tasks.taskSignEditing)
+		dialog.setButtonClick({ok:true})
 		if (tasks.taskSignEditing) {
-			await tasks.updateTaskDatabase()
+			await tasks.updateTaskDatabase({mes:true })
 		} else {
 			await tasks.setTaskDatabase()
 		}
 		
 		await taskLists.getTaskList({id:route.params.id})
-		tasks.toggleViewCreateTaskVisible()
+		
+		dialog.toggleViewDialogVisible()
 	}
+
 </script>
 
 <style lang="scss" scoped>

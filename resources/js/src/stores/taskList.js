@@ -21,9 +21,14 @@ export const useTaskListStore = defineStore('taskList', () => {
   const taskListLength = computed(() => taskLists.value.length);
   const taskListSelectDelete = ref([])
 
+  const getTaskListsCompleted = computed(() => {
+		const listsCompleted = taskLists.value.filter((word) => 
+      word.tasks.filter((task) => task.complite).length > 0)
+    return listsCompleted
+	})
+
   function setTaskListSelectDelete(item) {
     taskListSelectDelete.value.push(... item)
-    console.log(taskListSelectDelete.value)
   }
 
   function indexTaskList (id)  { 
@@ -34,8 +39,6 @@ export const useTaskListStore = defineStore('taskList', () => {
   
     //получение списков
     async function getTaskLists() {
-      // const data = JSON.stringify(user)
-     
       try {
         const config = {
           method: 'get',
@@ -73,7 +76,6 @@ export const useTaskListStore = defineStore('taskList', () => {
         }
           await axios(config)
             .then(({data})=>{
-              console.log(data.data.tasks)
               taskListSelect.value = data.data.taskList
               tasks.setTasks( data.data.tasks)
             })
@@ -86,8 +88,7 @@ export const useTaskListStore = defineStore('taskList', () => {
 
      //сохранение нового списка в базу
     async function setTaskListDatabase() {
-      console.log(user.token)
-      // const data = JSON.stringify(user)
+      
       try {
         const config = {
           method: 'post',
@@ -103,10 +104,7 @@ export const useTaskListStore = defineStore('taskList', () => {
         }
           await axios(config)
             .then(({data})=>{
-              console.log(data)
               message.setMessage(data)
-              // projectsList.value = [data.data.facility]
-              // projectSelect.value = {... data.data.facility}
             })
           return true
       } catch (e) {
@@ -117,7 +115,6 @@ export const useTaskListStore = defineStore('taskList', () => {
 
      //обновление списка в базе
      async function updateTaskListDatabase() {
-      console.log(taskListSelect.value)
       try {
         const config = {
           method: 'put',
@@ -132,15 +129,13 @@ export const useTaskListStore = defineStore('taskList', () => {
             taskList: taskListSelect.value
           }
         }
-          await axios(config)
-            .then(({data})=>{
-              console.log(data)
-              message.setMessage(data)
-              
-            })
-          return true
+        await axios(config)
+          .then(({data})=>{
+            message.setMessage(data)
+          })
+        return true
       } catch (e) {
-         message.setMessageError( e )
+          message.setMessageError( e )
         return false
       }
     }
@@ -162,14 +157,11 @@ export const useTaskListStore = defineStore('taskList', () => {
             "taskList": taskListSelectDelete.value
           }
         }
-          await axios(config)
-            .then(({data})=>{
-              console.log(data)
-              message.setMessage(data)
-              // projectsList.value = [data.data.facility]
-              // projectSelect.value = {... data.data.facility}
-            })
-          return true
+        await axios(config)
+          .then(({data})=>{
+            message.setMessage(data)
+          })
+        return true
       } catch (e) {
          message.setMessageError( e )
         return false
@@ -195,7 +187,6 @@ export const useTaskListStore = defineStore('taskList', () => {
         setNewTaskListCreate() // обнуление при закрытии
       }
       viewCreateTaskListVisible.value = !viewCreateTaskListVisible.value
-      console.log(viewCreateTaskListVisible.value)
     }
 
     function settaskListSignEditing(attribute){
@@ -210,6 +201,7 @@ export const useTaskListStore = defineStore('taskList', () => {
     viewCreateTaskListVisible,
     taskListSignEditing,
     taskListSelectDelete,
+    getTaskListsCompleted,
     setTaskListSelectDelete,
     settaskListSignEditing,
     indexTaskList,
@@ -221,6 +213,7 @@ export const useTaskListStore = defineStore('taskList', () => {
     setNewTaskListCreate,
     setTaskListCreate,
     setTaskListDatabase,
+    
 
   }
 })

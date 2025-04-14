@@ -4,7 +4,7 @@
 	>
 		<TheLoader/>
 		<MessageView/>
-		<TaskCreateDialog/>
+		<DialogView/>
 		
 
 		<div class="header tasks">
@@ -55,34 +55,32 @@
 	
 	import TheLoader from './ui/LoaderView.vue';
 	import MessageView from "./ui/MessageView.vue"
+	import DialogView from './ui/DialogView.vue';
 	
 	import { ref, computed, watch } from 'vue'
 	import { useRouter, RouterLink, useRoute} from 'vue-router'
 	
-	
-	const showActive = ref(false)
-	const router = useRouter()
-	const route = useRoute()
-
 	import { useTasksStore } from '../stores/tasks.js'
 	import { useTaskListStore } from '../stores/taskList.js'
 	import { useUsersStore } from '../stores/Users.js'
 	import { useMessageStore } from '../stores/message.js'
-	import TaskCreateDialog from './ui/TaskCreateDialog.vue';
-	
+	import { useDialogStore } from "../stores/dialog.js";
+		
+	const router = useRouter()
+	const route = useRoute()
 	
 	const message = useMessageStore()
 	const taskLists = useTaskListStore()
 	const tasks = useTasksStore()
 	const user = useUsersStore()
+	const dialog = useDialogStore()
+
+	const showActive = ref(false)
 
 	const existence = computed(() => tasks.tasksLength == 0)
 	const tasksComleted = computed(() => tasks.tasksCompleted.length == 0)
 	const userAutch = computed(() => user.token !== null)
-	
-	console.log(userAutch.value)
-	console.log(user.autchUser)
-	
+		
 	const listMenu = ref ([
 		{
 			name:'Добавить задачу',
@@ -96,7 +94,7 @@
 			link:'/',
 			disabled: existence,
 			visible: true,
-			func: clickTaskDelete
+			func: clickTasksDelete
 		},
 		{
 			name:'Удалить завершённые',
@@ -132,40 +130,41 @@
 		// console.log('heder props.menuVisible - ', menuVisible)
 		if (menuVisible) {
 			showActive.value = false
-			
 		}
 	})
 	
 	function clickAddTask (){
 		tasks.setNewTaskCreate(route.params.id)
-		tasks.toggleViewCreateTaskVisible()
+		dialog.setLayout('TheItemTaskNewVsDialog')
+   	dialog.toggleViewDialogVisible()
 	}
+
 	function clickElementMenu(link){
-		
 		if (window.innerWidth > 480){
-				router.push(link)
+			router.push(link)
 		}
-		
 	}
 
 	function clickMenuNoVisible() {
 		if (showActive.value) {
 			showActive.value = false
 		}
-		
 	}
 
 	function clickMenuButton() {
-		
 		showActive.value = !showActive.value
-		console.log()
-		
 	}
 
 	async function clickDeleteTasksCompleted() {
-		tasks.setTasksSelectDelete(tasks.tasksCompleted.map((num) => num.id))
-		await tasks.deleteTaskDatabase(tasks.tasksCompleted[0].id)
-		await taskLists.getTaskList({id:tasks.tasksCompleted[0].list_id})
+		dialog.setLayout('TheItemTaskDeleteComletVsDialog')
+		dialog.toggleViewDialogVisible()
+		message.setMenuVisible();
+		const result = await dialog.setDialogeDelete(true)
+		if (result) {
+			tasks.setTasksSelectDelete(tasks.tasksCompleted.map((num) => num.id))
+			await tasks.deleteTaskDatabase(tasks.tasksCompleted[0].id)
+			await taskLists.getTaskList({id:tasks.tasksCompleted[0].list_id})
+		}
 	}
 
 	function clickImemMenu(itemFunc){
@@ -174,10 +173,16 @@
 		itemFunc()
 	}
 
-	async function clickTaskDelete(params) {
-		tasks.setTasksSelectDelete(tasks.tasks.map((num) => num.id))
-		await tasks.deleteTaskDatabase(tasks.tasks[0].id)
-		await taskLists.getTaskList({id:tasks.tasks[0].list_id})
+	async function clickTasksDelete(params) {
+		dialog.setLayout('TheItemTaskDeleteAllVsDialog')
+		dialog.toggleViewDialogVisible()
+		message.setMenuVisible();
+		const result = await dialog.setDialogeDelete(true)
+		if (result) {
+			tasks.setTasksSelectDelete(tasks.tasks.map((num) => num.id))
+			await tasks.deleteTaskDatabase(tasks.tasks[0].id)
+			await taskLists.getTaskList({id:tasks.tasks[0].list_id})
+		}
 	}
 
 	function clickGotoLists(){

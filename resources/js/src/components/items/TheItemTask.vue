@@ -2,15 +2,15 @@
    <div class="listItem" 
 		@click.stop="clickItemTaskList"
 	>
-        <div class="sortIcon"><img src="../../assets/img/icons/bars.svg" /></div>
-        <label 
-		  		
-		  >
-				<input class="form-check-input" type="checkbox" 
-					v-model="item.complite"
-					@click="clickCheckTask()"
-				/>
-			</label>
+        <div class="sortIcon">
+            <img src="../../assets/img/icons/bars.svg" />
+        </div>
+        <label>
+            <input class="form-check-input" type="checkbox" 
+                v-model="item.complite"
+                @click="clickCheckTask()"
+            />
+        </label>
         <div class="contentWrapper uncomplite">
             <div class="content">
 					<div class="text">{{ item.text }}</div>
@@ -20,24 +20,26 @@
             </div>
         </div>
         <div class="selectItem rounded-2"><img src="../../assets/img/icons/check.svg" /></div>
-        <div class="menuWrapper">
+        <div class="menuWrapper"
+            @click.stop="clickShowVisible()"
+        >
             <div class="headerButtons rounded-2"
-					@click.stop="clickShowVisible()"
-				>
-					<span class="tasksBtnSymbol"></span>
+				
+			>
+				<span class="tasksBtnSymbol"></span>
             </div>
             <div class="dropdownMenu rounded-2"
-					:class="{'show': showVisible}"
-					@click.stop="clickShowVisible()"
-				>
-					<ul class="rounded-2">
-						<li class="menu rounded-2"
-							@click.stop="editTask(item)"
-						>Редактировать</li>
-						<li class="menu rounded-2"
-							@click.stop="deleteTask(item.id)"
-						>Удалить</li>
-					</ul>
+                :class="{'show': showVisible}"
+                @click.stop="clickShowVisible()"
+            >
+                <ul class="rounded-2">
+                    <li class="menu rounded-2"
+                        @click.stop="editTask(item)"
+                    >Редактировать</li>
+                    <li class="menu rounded-2"
+                        @click.stop="deleteTask(item.id)"
+                    >Удалить</li>
+                </ul>
             </div>
         </div>
    </div>
@@ -49,10 +51,12 @@ import { useRouter, useRoute } from "vue-router";
 import { useTaskListStore } from "../../stores/taskList.js";
 import { useMessageStore } from "../../stores/message.js";
 import { useTasksStore } from '../../stores/tasks.js'
+import { useDialogStore } from "../../stores/dialog.js";
 
 const message = useMessageStore();
 const taskLists = useTaskListStore();
 const tasks = useTasksStore() 
+const dialog = useDialogStore()
 
 const showVisible = ref(false);
 
@@ -78,37 +82,43 @@ const smallText = computed(() => {
 });
 
 function clickShowVisible() {
-   showVisible.value = !showVisible.value;
+    message.setMenuVisible();
+    setTimeout(() => {
+        showVisible.value = !showVisible.value;
+    }, 100)
 }
 
 async function clickCheckTask(){
-	console.log(props.item)
 	const item = {... props.item}
-	console.log(props.item)
 	item.complite = !item.complite
 	tasks.setTaskCreate( item);
-	await tasks.updateTaskDatabase({message: false});
-
+	await tasks.updateTaskDatabase({mes: false});
 }
 
 function clickItemTaskList(params) {
-    // if (showVisible.value){
-    // 	clickShowVisible()
-    // }
    message.setMenuVisible();
-   //  router.push({ name: "taskList", params: { id: props.item.id } });
 }
 
 async function editTask(item) {
-   //  taskLists.setTaskListCreate(item);
-   //  taskLists.toggleViewCreateTaskListVisible();
-	// setTasksSelectDelete
+    tasks.setTaskCreate({... item});
+    dialog.setLayout('TheItemTaskNewVsDialog')
+    dialog.toggleViewDialogVisible()
+    message.setMenuVisible()
+    dialog.setDialogeDelete(false)
 }
 
 async function deleteTask(id) {
-	tasks.tasksSelectDelete = []
-	await tasks.deleteTaskDatabase(id);
-	await taskLists.getTaskList({id:route.params.id});
+    
+	dialog.setLayout('TheItemTaskDeleteVsDialog')
+    dialog.toggleViewDialogVisible()
+    message.setMenuVisible();
+    const result = await dialog.setDialogeDelete(true)
+    if (result) {
+        tasks.tasksSelectDelete = []
+        await tasks.deleteTaskDatabase(id);
+        await taskLists.getTaskList({id:route.params.id});
+    }
+    
 }
 </script>
 
@@ -202,11 +212,13 @@ async function deleteTask(id) {
     pointer-events: none;
 }
 
-.headerButtons {
-    &:hover {
-        cursor: pointer;
-        transform: scale(1.5, 1.5);
-    }
+.menuWrapper:hover {
+	cursor: pointer;
+
+	& .headerButtons{
+		cursor: pointer;
+		transform: scale(1.5, 1.5);
+	}
 }
 .dropdownMenu {
     position: absolute;

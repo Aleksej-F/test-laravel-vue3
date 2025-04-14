@@ -22,23 +22,28 @@ export const useTasksStore = defineStore('tasks', () => {
   const tasksLength = computed(() => tasks.value.length);
   
   const tasksNoCompleted = computed(() => {
-		console.log(tasks.value.filter((word) => !word.complite).length)
 		return tasks.value.filter((word) => !word.complite)
 	})
 
   const tasksCompleted = computed(() => {
-		console.log(tasks.value.filter((word) => word.complite))
 		return tasks.value.filter((word) => word.complite)
 	})
 
+  const getTaskSelectTextLength = computed(() => {
+		// console.log(taskLists.taskListSelect.text)
+		return taskSelect.value.text.length
+	})
+
+  const getTaskSelectSmallTextLength = computed(() => {
+    // console.log(taskLists.taskListSelect.text)
+    return taskSelect.value.smallText ? taskSelect.value.smallText.length : 0
+  })
+
   function setTasksSelectDelete(item) {
     tasksSelectDelete.value.push(... item)
-    console.log(tasksSelectDelete.value)
   }
   function setTasks(item) {
-    console.log(item )
     tasks.value =  item 
-    console.log(tasks.value)
   }
 
   function indexTaskList (id)  { 
@@ -68,7 +73,7 @@ export const useTasksStore = defineStore('tasks', () => {
             })
           return true
       } catch (e) {
-         message.setMessageError( e.data )
+          message.setMessageError( e.data )
         return false
       }
     }
@@ -88,7 +93,6 @@ export const useTasksStore = defineStore('tasks', () => {
         }
           await axios(config)
             .then(({data})=>{
-              console.log(data.data.facility)
               projectsList.value = [data.data.facility]
               projectSelect.value = {... data.data.facility}
             })
@@ -101,8 +105,6 @@ export const useTasksStore = defineStore('tasks', () => {
 
      //сохранение новой задачи в базу
     async function setTaskDatabase() {
-      console.log(user.token)
-      // const data = JSON.stringify(user)
       try {
         const config = {
           method: 'post',
@@ -118,10 +120,7 @@ export const useTasksStore = defineStore('tasks', () => {
         }
           await axios(config)
             .then(({data})=>{
-              console.log(data)
               message.setMessage(data)
-              // projectsList.value = [data.data.facility]
-              // projectSelect.value = {... data.data.facility}
             })
           return true
       } catch (e) {
@@ -131,8 +130,7 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
      //обновление задачи в базе
-     async function updateTaskDatabase({message}) {
-      console.log(taskSelect.value)
+     async function updateTaskDatabase({mes }) {
       try {
         const config = {
           method: 'put',
@@ -149,12 +147,9 @@ export const useTasksStore = defineStore('tasks', () => {
         }
           await axios(config)
             .then(({data})=>{
-              console.log(data)
-              if (message){
+              if (mes){
                 message.setMessage(data)
               }
-              
-              
             })
           return true
       } catch (e) {
@@ -182,10 +177,7 @@ export const useTasksStore = defineStore('tasks', () => {
         }
           await axios(config)
             .then(({data})=>{
-              console.log(data)
               message.setMessage(data)
-              // projectsList.value = [data.data.facility]
-              // projectSelect.value = {... data.data.facility}
             })
           return true
       } catch (e) {
@@ -206,14 +198,12 @@ export const useTasksStore = defineStore('tasks', () => {
     
      //запись редактируемой задачи
     async function setTaskCreate(item) {
-      console.log(item)
       taskSelect.value =  item
       taskSignEditing.value = true
     }
      //изменение видимости диалогового окна
     function toggleViewCreateTaskVisible(){
       viewCreateTaskVisible.value = !viewCreateTaskVisible.value
-      console.log(viewCreateTaskVisible.value)
     }
 
     function setTaskSignEditing(attribute){
@@ -233,7 +223,8 @@ export const useTasksStore = defineStore('tasks', () => {
     
     indexTaskList,
     getTaskLists,
-    
+    getTaskSelectTextLength,
+    getTaskSelectSmallTextLength,
     tasksNoCompleted,
     tasksCompleted,
 

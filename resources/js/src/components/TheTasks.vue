@@ -68,6 +68,7 @@
   import { useTaskListStore } from "../stores/taskList.js";
   import { useUsersStore } from "../stores/Users.js";
   import { useTasksStore } from '../stores/tasks.js'
+  import { useDialogStore } from "../stores/dialog.js";
 
   import TheItemTask from "./items/TheItemTask.vue";
 
@@ -76,11 +77,11 @@
   const taskLists = useTaskListStore();
   const user = useUsersStore();
   const tasks = useTasksStore() 
-
+  const dialog = useDialogStore() 
 
   const tesxNoTasks = computed(() => {
       if (user.autchUser) {
-          return "У Вас нет задач. Создайте их.";
+          return "В этом списке нет задач. Создайте их.";
       } else {
           return "Для просмотра списков авторизуйтесь.";
       }
@@ -91,14 +92,11 @@
   const taskListId = ref(route.params.id);
   
   onMounted(async () => {
-      console.log("user.autchUser - ", user.autchUser);
+      
       if (user.autchUser) {
 
         await taskLists.getTaskList({id:route.params.id});
-        console.log(tasks.tasks)
-        console.log(tasks.tasks.length)
-        console.log(tasks.tasksLength)
-        console.log(tasks.tasksNoCompleted)
+        
       }
   });
   function toogleTaskComplitedVisible() {
@@ -112,7 +110,8 @@
 
   function clickAddTask (){
     tasks.setNewTaskCreate(route.params.id)
-    tasks.toggleViewCreateTaskVisible()
+    dialog.setLayout('TheItemTaskNewVsDialog')
+    dialog.toggleViewDialogVisible()
   }
 </script>
 

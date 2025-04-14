@@ -28,7 +28,7 @@
         
         <div class="addListButton active"
           title="Добавить список"
-          @click.stop="taskLists.toggleViewCreateTaskListVisible()"
+          @click.stop="clickAddTaskList()"
         >
           <span class="plusWrapper">
             <span class="plusVert"></span>
@@ -72,6 +72,10 @@
     // console.log('menuVisible.value - ', menuVisible.value)
     menuVisible.value = true
     setTimeout(() => menuVisible.value = false, 1000);
+  }
+  function clickAddTaskList() {
+    taskLists.setNewTaskListCreate()
+    taskLists.toggleViewCreateTaskListVisible()
   }
 
 </script>

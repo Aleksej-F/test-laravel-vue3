@@ -152,7 +152,11 @@
 	}
 
 	function clickMenuButton() {
-		showActive.value = !showActive.value
+		message.setMenuVisible()
+		
+		setTimeout(() => {
+			showActive.value = !showActive.value;
+		}, 100)
 	}
 
 	async function clickDeleteTasksCompleted() {

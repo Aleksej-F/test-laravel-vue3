@@ -179,9 +179,11 @@
 	}
 
 	function clickMenuButton() {
-		sortActive.value = false
-		showActive.value = !showActive.value
-		console.log()
+		message.setMenuVisible()
+		
+		setTimeout(() => {
+			showActive.value = !showActive.value;
+		}, 100)
 		
 	}
 

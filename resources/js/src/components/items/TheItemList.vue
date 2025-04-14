@@ -1,6 +1,6 @@
 <template>
 	<div class="listItem leftPadding"
-		@dblclick.stop="clickItemTaskList"
+		@click.stop="clickItemTaskList"
 	>
 		<div class="sortIcon">
 			<img src="../../assets/img/icons/bars.svg">
@@ -52,6 +52,14 @@
 					<li class="menu rounded-2"
 						@click.stop="deleteTaskList(item.id)"
 					>Удалить</li>
+					<li class="menu rounded-2"
+						title="Поделиться ссылкой на список в соцсетях"
+						
+					>Поделиться</li>
+
+					
+
+				
 				</ul>
 			</div>
 		</div>
@@ -64,10 +72,12 @@
 	import { useTaskListStore } from '../../stores/taskList.js'
 	import { useMessageStore } from '../../stores/message.js'
 	import { useDialogStore } from "../../stores/dialog.js"
-
+	import { useTasksStore } from '../../stores/tasks.js'
+	import SocialNetworkView from '../ui/SocialNetworkView.vue'
 	const message = useMessageStore()
   	const taskLists = useTaskListStore()
 	const dialog = useDialogStore()
+	const tasks = useTasksStore()
 
 	const showVisible = ref(false)
 		
@@ -76,12 +86,9 @@
 
 	const props = defineProps(['item', 'index', 'menuVisible'])
 
-
-
 	
-	// console.log(route.meta.autch)
 	watch(()=> message.menuVisible, (menuVisible) => {
-		// console.log(' item props.menuVisible - ', menuVisible)
+		console.log(' item props.menuVisible - ', menuVisible)
 		if (menuVisible) {
 			showVisible.value = false
 		}
@@ -104,7 +111,11 @@
 
 	function clickItemTaskList(params) {
 		message.setMenuVisible()
-		router.push({ name: 'taskList', params: { id: props.item.id } })
+		tasks.setTasks(props.item.tasks)
+		setTimeout(() => {
+			router.push({ name: 'taskList', params: { id: props.item.id } })
+		},200)
+		
 		
 	}
 
@@ -123,6 +134,16 @@
 			await taskLists.deleteTaskListDatabase(id)
 			await taskLists.getTaskLists()
 		}
+	}
+
+	async function copyLinkTaskList(params) {
+		navigator.clipboard.writeText('Hello Alligator!')
+		.then(() => {
+			// Получилось!
+		})
+		.catch(err => {
+			console.log('Something went wrong', err);
+		});
 	}
 </script>
 

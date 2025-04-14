@@ -67,6 +67,7 @@ export const useMessageStore = defineStore('message', () => {
   }
 
   function setMenuVisible(params) {
+    console.log(' setMenuVisible - ', menuVisible)
     menuVisible.value = true
     setTimeout(() => menuVisible.value = false, 1000);
   }

@@ -117,7 +117,7 @@
 
 <style lang="scss" scoped>
 .wrap {
-    height: 100vh;
+  height: 100vh;
 }
 
 

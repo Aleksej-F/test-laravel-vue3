@@ -2,8 +2,13 @@
   <div 
     @click.stop="message.setMenuVisible()"
   >
-    <TheHeader @click.stop="message.setMenuVisible()"/>
-    <RouterView />
+  
+    <router-view v-slot="{ Component }">
+      <transition name="fade">
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  
     <!-- <TheFooter /> -->
  </div>
   
@@ -21,5 +26,30 @@
 </script>
 
 <style lang="scss" scoped>
+  .fade-enter-from{
+    transform: scaleX(0);
+    opacity: 0;
+  }
   
+  .fade-enter-active, .fade-leave-active{
+    // transform: translateX(0);
+    transform-origin:right;
+    transition: all 1.5s ease 2s;
+  }
+ .fade-leave-active{
+    transform-origin:left;
+  }
+
+  .fade-enter-to, .fade-leave-from{
+    
+    transform:  scaleX(1);
+    opacity: 1;
+  }
+
+  
+  
+  .fade-leave-to {
+    transform: scaleX(0);
+    opacity: 0;
+  }
 </style>

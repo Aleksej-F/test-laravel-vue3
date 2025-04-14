@@ -1,7 +1,5 @@
 <template>
   <div >
-    
- 
     <div id="listScreen" class="screens active"
      
     > 
@@ -49,7 +47,7 @@
   import { ref, computed } from 'vue'
   import { useTaskListStore } from '../stores/taskList.js'
   import { useUsersStore } from '../stores/Users.js'
-
+  import TheHeader from './TheHeader.vue';
   const taskLists = useTaskListStore()
   const user = useUsersStore()
 

@@ -26,7 +26,12 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       // component: () => import('')
     },
- 
+    {
+      path: '/tasklist/:id',
+      name: 'taskList',
+      meta: {autch: false,},
+      component: () => import('../views/TaskListView.vue'),
+    },
    
     {
       path: '/logout',
@@ -90,7 +95,7 @@ router.beforeEach((to, from, next) => {
 
   const userAutch = localStorage.getItem('token') 
   // ?    true : false
-   console.log('userAutch', userAutch)
+  //  console.log('userAutch', userAutch)
   
    console.log(from)
    console.log(to)

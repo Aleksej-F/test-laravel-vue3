@@ -83,13 +83,14 @@ class TaskListController extends Controller
                 errors: 403
             ); 
         }
-        $taskList = Task::where('list_id', $id)
+        $tasks = Task::where('list_id', $id)
             ->orderBy('sorting')
             ->get();
        
         return $this->json->response(
             data: [
-                'taskList' => $taskList,
+                'taskList' => new TaskListResource($taskList),
+                'tasks' => TaskResource::collection($tasks),
             ],
             message: 'Список задач.',
     );

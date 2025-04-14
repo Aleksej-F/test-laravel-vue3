@@ -4,73 +4,47 @@
 	>
 		<TheLoader/>
 		<MessageView/>
-		<ListCreateDialog/>
-		<div class="header-logo">
-			<RouterLink to="/">
-			
-			</RouterLink>
-		</div>
-		<div class="header list">
+		<TaskCreateDialog/>
+		
+
+		<div class="header tasks">
 			<div class="headerLine">
-				<div id="mainMenu" class="rounded-2">
-					<img src="../assets/img/icons/list-check.svg">
-				</div>
-				
-				<div class="appTitle">Simple Task List</div>
-					
-				<div id="listMenuButton" class="headerButtons rounded-2"
+				<RouterLink to="/">
+					<div id="headerBackButton" class="headerButtons rounded-2">
+						<img src="../assets/img/icons/arrow_back_black_24dp.svg">
+					</div>
+				</RouterLink>	
+				<div id="tasksMenuButton" class="headerButtons rounded-2 light"
 					@click.stop="clickMenuButton()"
 				>
 					<span class="menuBtnSymbol"></span>
 				</div>
-						
-			</div>
-			<div class="headerLine sort">
-				<div id="sortMenuOut" class="rounded-2"
-					@click.stop="clickSortButton()"
-					v-if="false"
+				<div id="tasksMenu" class="headerMenu dropdownMenu rounded-2 light"
+					:class="{'show':showActive}"
 				>
-					<div class="choose_mnu_wrapper">
-						<div class="choose_mnu_arrow"
-						
+					<ul class="rounded-2">
+						<li class="menu rounded-2"
+							v-for="(item, index ) in listMenu"
+								:key="index"
+								:class="{'disabled': item.disabled }"
+								@click.stop="clickImemMenu(item.func)"
 						>
-							<div class="menuIcon">
-								<img src="../assets//img/icons/bars-sort.svg">
-							</div>
-						</div>
-						<div class="current_text">статус ↑</div>
-						<div class="items_wrapper rounded-2"
-							:class="{'active': sortActive}"
-						>
-							<div class="choose_item rounded-2 light">дата ↓</div>
-							<div class="choose_item rounded-2 light">дата ↑</div>
-							<div class="choose_item rounded-2 light">название ↓</div>
-							<div class="choose_item rounded-2 light">название ↑</div>
-							<div class="choose_item rounded-2 light">статус ↓</div>
-							<div class="choose_item rounded-2 light active">статус ↑</div>
-						</div>
-					</div>
+							<p v-if="item.visible">{{ item.name  }}</p>
+						</li>
+					</ul>
 				</div>
-			</div>
 			
-			<div id="listMenu" class="headerMenu dropdownMenu rounded-2 light"
-				:class="{'show':showActive}"
-				@click="clickMenuButton()"
-			>
-				<ul>
-					<li  class="menu rounded-2"
-						v-for="(item, index ) in listMenu"
-						:key="index"
-						:class="{'disabled': item.disabled }"
-						@click.stop="clickImemMenu(item.func)"
-						
-					>
-						<p v-if="item.visible">{{ item.name  }}</p>
-					</li>
-				</ul>
+				
+				
 			</div>
+			<div class="headerLine title">
+				<h6 id="tasksTitle">{{ taskLists.taskListSelect.text }}</h6>
+			</div>
+			<div class="headerLine time">
+				<h6 id="tasksTime">{{ taskLists.taskListSelect.update_at }}</h6>				
+			</div>	
 		</div>
-  </div >
+	</div >
   
 </template>
 
@@ -78,46 +52,58 @@
 	defineProps({
 		
 	})
+	
 	import TheLoader from './ui/LoaderView.vue';
 	import MessageView from "./ui/MessageView.vue"
-	import ListCreateDialog from "./ui/ListCreateDialog.vue"
+	
 	import { ref, computed, watch } from 'vue'
-	import { useRouter, RouterLink } from 'vue-router'
-	const sortActive = ref(false)
+	import { useRouter, RouterLink, useRoute} from 'vue-router'
+	
+	
 	const showActive = ref(false)
 	const router = useRouter()
-	
+	const route = useRoute()
+
+	import { useTasksStore } from '../stores/tasks.js'
 	import { useTaskListStore } from '../stores/taskList.js'
 	import { useUsersStore } from '../stores/Users.js'
 	import { useMessageStore } from '../stores/message.js'
+	import TaskCreateDialog from './ui/TaskCreateDialog.vue';
+	
 	
 	const message = useMessageStore()
 	const taskLists = useTaskListStore()
+	const tasks = useTasksStore()
 	const user = useUsersStore()
-	const existence = computed(() => taskLists.taskLists.length == 0)
+
+	const existence = computed(() => tasks.tasksLength == 0)
+	const tasksComleted = computed(() => tasks.tasksCompleted.length == 0)
 	const userAutch = computed(() => user.token !== null)
+	
 	console.log(userAutch.value)
 	console.log(user.autchUser)
+	
 	const listMenu = ref ([
 		{
-			name:'Добавить список',
+			name:'Добавить задачу',
 			link:'/',
 			disabled: false,
 			visible: true,
-			func: taskLists.toggleViewCreateTaskListVisible
+			func: clickAddTask
 		},
 		{
 			name:'Удалить всё',
 			link:'/',
 			disabled: existence,
 			visible: true,
-			func: clickTaskListsDelete
+			func: clickTaskDelete
 		},
 		{
 			name:'Удалить завершённые',
 			link:'/',
-			disabled: true,
-			visible: true
+			disabled: tasksComleted,
+			visible: true,
+			func: clickDeleteTasksCompleted
 		},
 
 		// {
@@ -133,28 +119,27 @@
 		//visible:false
 		// },
 		{
-			name:'Выйти',
-			link:'/acoustics',
+			name:'К спискам',
+			link:'/',
 			disabled: false,
-			visible: userAutch.value,
-			func: clickUserLogin
+			visible: true,
+			func: clickGotoLists
 		},
-		{
-			name:'Войти',
-			link:'/login',
-			disabled: false,
-			visible: !userAutch.value,
-			func: clickUserLogin
-		},
+		
 	])
+
 	watch(()=> message.menuVisible, (menuVisible) => {
 		// console.log('heder props.menuVisible - ', menuVisible)
 		if (menuVisible) {
 			showActive.value = false
-			sortActive.value = false
+			
 		}
 	})
-
+	
+	function clickAddTask (){
+		tasks.setNewTaskCreate(route.params.id)
+		tasks.toggleViewCreateTaskVisible()
+	}
 	function clickElementMenu(link){
 		
 		if (window.innerWidth > 480){
@@ -167,35 +152,36 @@
 		if (showActive.value) {
 			showActive.value = false
 		}
-		if (sortActive.value) {
-			sortActive.value = false
-		}
+		
 	}
 
 	function clickMenuButton() {
-		sortActive.value = false
+		
 		showActive.value = !showActive.value
 		console.log()
 		
 	}
 
-	function clickSortButton() {
-		sortActive.value = !sortActive.value
+	async function clickDeleteTasksCompleted() {
+		tasks.setTasksSelectDelete(tasks.tasksCompleted.map((num) => num.id))
+		await tasks.deleteTaskDatabase(tasks.tasksCompleted[0].id)
+		await taskLists.getTaskList({id:tasks.tasksCompleted[0].list_id})
 	}
 
 	function clickImemMenu(itemFunc){
+		console.log(itemFunc)
 		clickMenuNoVisible()
 		itemFunc()
 	}
 
-	async function clickTaskListsDelete(params) {
-		taskLists.setTaskListSelectDelete(taskLists.taskLists.map((num) => num.id))
-		await taskLists.deleteTaskListDatabase(num.id)
-		await taskLists.getTaskLists()
+	async function clickTaskDelete(params) {
+		tasks.setTasksSelectDelete(tasks.tasks.map((num) => num.id))
+		await tasks.deleteTaskDatabase(tasks.tasks[0].id)
+		await taskLists.getTaskList({id:tasks.tasks[0].list_id})
 	}
 
-	function clickUserLogin(){
-		router.push({ name: 'login',} )
+	function clickGotoLists(){
+		router.push({ name: 'home',} )
 	}
 </script>
 
@@ -234,6 +220,13 @@
 	
 }
 
+.menuBtnSymbol {
+	font-size: 1.6rem;
+	color: #5b5b5b;
+	pointer-events: none;
+
+}
+
 .header.tasks {
 	/*background-color: rgb(100 149 237);*/
 	background-color: var(--main-task-color);
@@ -270,6 +263,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	justify-content: space-between;
+	margin-top: 0;
 }
 
 .headerLine.title h6 {

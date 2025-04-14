@@ -164,10 +164,12 @@ class TaskController extends Controller
        
         return $this->json->response(
             data: [
-                'taskNew' => $task,
-                'tasks' =>  $tasks
+                'task' => $task,
+                'tasks' =>  $tasks,
+                'taskNew' => $taskNew,
+                '$sortBol' => $sortBol
             ],
-            message: 'В разработке.'//'Задача обновлена',
+            message: 'Задача обновлена.'//'Задача обновлена',
         );
     }
 
@@ -185,7 +187,7 @@ class TaskController extends Controller
         $tasksNew = [];
         $task = null;
         //если нет массива задач, проверяем значение адресной строки
-        if (is_null($tasksDelete)){
+        if (is_null($tasksDelete) || (is_array($tasksDelete) && count($tasksDelete) == 0)){
             try {
                 $task = Task::find($id);
                 if (is_null( $task)){
@@ -236,7 +238,11 @@ class TaskController extends Controller
             } catch (\Throwable $e) {
                 return $this->json->error(message: $e->getMessage());
             }
-            $message = 'Задачи удалены.';
+            if (count($newtasksDelete) == 1){
+                $message = 'Задача удалена.';
+            } else {
+                $message = 'Задачи удалены.';
+            }
         } else {
             return   $this->json->error(
                 message: 'Укажите, принадлежащие Вам, задачи для удаления!',

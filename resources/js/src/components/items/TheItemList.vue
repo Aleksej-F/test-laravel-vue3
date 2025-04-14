@@ -1,11 +1,13 @@
 <template>
 	<div class="listItem leftPadding"
-		@click.stop="clickItemTaskList"
+		@dblclick.stop="clickItemTaskList"
 	>
 		<div class="sortIcon">
 			<img src="../../assets/img/icons/bars.svg">
 		</div>
-		<div class="contentWrapper uncomplite">
+		<div class="contentWrapper "
+			:class="{ 'uncomplite' : !item.complite,  'complite' : item.complite}"
+		>
 			<div class="content">
 			<div class="text">{{ item.text }}</div>
 			<div class="smallWrapper">
@@ -29,24 +31,26 @@
 		<div class="selectItem rounded-2">
 			<img src="../../assets/img/icons/check.svg">
 		</div>
-		<div class="menuWrapper">
+		<div class="menuWrapper"
+			@click.stop="clickShowVisible()"
+		>
 			<div class="headerButtons rounded-2"
-				@click.stop="clickShowVisible()"
+				
 			>
-			<span class="tasksBtnSymbol"></span>
+				<span class="tasksBtnSymbol"></span>
 			</div>
 			<div class="dropdownMenu rounded-2"
-			:class="{'show': showVisible}"
-			@click.stop="clickShowVisible()"
+				:class="{'show': showVisible}"
+				
 			>
-			<ul class="rounded-2">
-				<li class="menu rounded-2"
-					@click.stop="editTaskList(item)"
-				>Редактировать</li>
-				<li class="menu rounded-2"
-					@click.stop="deleteTaskList(item.id)"
-				>Удалить</li>
-			</ul>
+				<ul class="rounded-2">
+					<li class="menu rounded-2"
+						@click.stop="editTaskList(item)"
+					>Редактировать</li>
+					<li class="menu rounded-2"
+						
+					>Удалить</li>
+				</ul>
 			</div>
 		</div>
 	</div>
@@ -94,10 +98,11 @@
 	})
 
 	function clickItemTaskList(params) {
-		if (showVisible.value){
-			clickShowVisible()
-		}
-		router.push({ name: 'project', params: { id: props.item.id } })
+		// if (showVisible.value){
+		// 	clickShowVisible()
+		// }
+		message.setMenuVisible()
+		  router.push({ name: 'taskList', params: { id: props.item.id } })
 		
 	}
 
@@ -138,7 +143,7 @@
 	/*transition: .2s background-color;*/
   transition: background-color 0.2s ease-out 0.1s;
   &:hover{
-    cursor: pointer;
+    
     background-color: #c0bcbc;
 
   }
@@ -280,4 +285,24 @@
     /* border-radius: 0.375rem; */
     border-radius: .7rem;
 }
+
+
+.complite {
+	text-decoration: line-through;
+	/*background: rgb(169 169 169);
+   color: rgb(240 248 255);*/
+	/*color: rgb(13, 110, 253) !important;*/
+	color: var(--main-task-color) !important;
+}
+
+.uncomplite:last-of-type {
+	margin-bottom: 2rem;
+}
+
+.complite,
+.uncomplite {
+	position: relative;
+	/*width: calc(100% - var(--menu-wrapper) - 1px);*/
+}
+
 </style>

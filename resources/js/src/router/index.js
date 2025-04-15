@@ -32,7 +32,13 @@ const router = createRouter({
       meta: {autch: false,},
       component: () => import('../views/TaskListView.vue'),
     },
-   
+    
+    {
+      path: '/tasklist/share/:id',
+      name: 'taskListShare',
+      meta: {autch: false,},
+      component: () => import('../views/TaskListShareView.vue'),
+    },
     {
       path: '/logout',
       name: 'logout',
@@ -60,30 +66,7 @@ const router = createRouter({
       meta: {autch: true, loyout: 'Admin'},
       component: () => import('../views/Admin/AdminsPanelView.vue'),
     },
-    {
-      path: '/admins-panel/facilities',
-      name: 'adminsFacilities',
-      meta: {autch: true, loyout: 'Admin'},
-      component: () => import('../views/Admin/AdminsFacilitiesView.vue'),
-    },
-    {
-      path: '/admins-panel/facility/:id/:operation',
-      name: 'adminsFacilitiesCreate',
-      meta: {autch: true, loyout: 'Admin'},
-      component: () => import('../views/Admin/AdminsFacilityCreateView.vue'),
-    },
-    {
-      path: '/admins-panel/facility/:id/description/:operation',
-      name: 'adminsFacilityDescriptionCreate',
-      meta: {autch: true, loyout: 'Admin'},
-      component: () => import('../views/Admin/AdminsFacilityDescriptionCreateView.vue'),
-    },
-    {
-      path: '/admins-panel/facility/:id/slider/edit',
-      name: 'adminsFacilitySliderCreate',
-      meta: {autch: true, loyout: 'Admin'},
-      component: () => import('../views/Admin/AdminsFacilitySliderCreateView.vue'),
-    },
+   
    
   ]
 })

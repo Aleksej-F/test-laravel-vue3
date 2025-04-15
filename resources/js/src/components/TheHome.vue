@@ -1,5 +1,5 @@
 <template>
-  <div >
+ 
     <div id="listScreen" class="screens active"
      
     > 
@@ -37,7 +37,7 @@
         </div>
       </div>
     </div>
-  </div>
+  
    
 </template>
 

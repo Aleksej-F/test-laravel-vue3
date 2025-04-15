@@ -1,6 +1,8 @@
 <template>
-    <TheHeader />
-    <TheHome />
+    <div>
+        <TheHeader />
+        <TheHome />
+    </div>
 </template>
 
 <script setup>

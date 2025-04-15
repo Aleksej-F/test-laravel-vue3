@@ -187,7 +187,12 @@ class TaskListController extends Controller
             } catch (\Throwable $e) {
                 return $this->json->error(message: $e->getMessage());
             }
-            $message = 'Списки удалены.';
+            if (count($newListDelete) == 1){
+                $message = 'Список удален.';
+            } else {
+                $message = 'Списки удалены.';
+            }
+
         } else {
             return   $this->json->error(
                 message: 'Укажите, принадлежащие Вам, списки для удаления!',
@@ -285,6 +290,55 @@ class TaskListController extends Controller
         );
 
 
+    }
+
+    public function getTasklistShare (string $id): \Illuminate\Http\JsonResponse
+    {
+        $taskList = [];
+        
+        try {
+           $taskList = TaskList::find($id);
+           $taskList->tasks()->get();
+           if (is_null($taskList) ){
+                return $this->json->error(
+                    message: 'Список не найден!',
+                    errors: 403
+                );
+           }
+        } catch (\Throwable $e) {
+            return $this->json->error(message: $e->getMessage());
+        }
+       
+        return $this->json->response(
+            data: [
+                'taskList' => new TaskListResource($taskList),
+                
+            ],
+            message: "Вы получили список по приглашению.",
+        );
+        // tasklistAppend
+    }
+    
+    public function tasklistAppend (string $id): \Illuminate\Http\JsonResponse
+    {
+        $user = Auth::user();
+       
+        
+        try {
+          // обновление записей в промежуточной таблице
+             $user->taskList()->attach([$id]);
+        } catch (\Throwable $e) {
+            return $this->json->error(message: $e->getMessage());
+        }
+       
+        return $this->json->response(
+            data: [
+                'taskList' => [],
+                
+            ],
+            message: "Список успешно добавлен.",
+        );
+        // tasklistAppend
     }
     
 }

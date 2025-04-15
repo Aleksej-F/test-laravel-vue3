@@ -12,11 +12,12 @@
 					@click.stop="noClickDialog()"
 				>Отмена</div>
 				<div class="ok-button button-d" 
+					:class="{'disabled':  !user.autchUser}"
 					v-if="dialog.dialogeDelete"
 					@click.stop="yesClickDialog()"
 				>Да</div>
 				<div class="ok-button button-d" 
-					:class="{'disabled': tasks.getTaskSelectTextLength == 0}"
+					:class="{'disabled': tasks.getTaskSelectTextLength == 0, 'disabled':  !user.autchUser}"
 					@click.stop="okClickDialog()"
 					v-else
 				>Ok</div>
@@ -31,6 +32,7 @@
 	import { useTasksStore } from '../../stores/tasks.js'
 	import { useTaskListStore } from "../../stores/taskList.js"
 	import { useDialogStore } from "../../stores/dialog.js"
+	import { useUsersStore } from '../../stores/Users.js'
 	import TheItemTaskNewVsDialog from '../items/TheItemTaskNewVsDialog.vue'
 	import TheItemTaskDeleteVsDialog from '../items/TheItemTaskDeleteVsDialog.vue'
 	import TheItemTaskDeleteComletVsDialog from '../items/TheItemTaskDeleteComletVsDialog.vue'
@@ -38,14 +40,16 @@
 	import TheItemTaskListDeleteAllVsDialog from '../items/TheItemTaskListDeleteAllVsDialog.vue'
 	import TheItemTaskListDeleteComletVsDialog from '../items/TheItemTaskListDeleteComletVsDialog.vue'
 	import TheItemTaskListDeleteVsDialog from '../items/TheItemTaskListDeleteVsDialog.vue'
-	
+	import TheItemTaskListShareVsDialog from '../items/TheItemTaskListShareVsDialog.vue'
+
 	const route = useRoute()
 
 	const taskLists = useTaskListStore();
 	const tasks = useTasksStore()
 	const props = defineProps(['message', ])
 	const dialog = useDialogStore() 
-	
+	const user = useUsersStore()
+
 	const itemTask = ref('')
 
 	const layoutComponent = shallowRef( {
@@ -55,7 +59,8 @@
 		TheItemTaskDeleteComletVsDialog,
 		TheItemTaskListDeleteAllVsDialog,
 		TheItemTaskListDeleteComletVsDialog,
-		TheItemTaskListDeleteVsDialog
+		TheItemTaskListDeleteVsDialog,
+		TheItemTaskListShareVsDialog
   	})
 
 	const layout = computed(() => {
@@ -73,16 +78,7 @@
 	}
 
 	async function okClickDialog() {
-		console.log(tasks.taskSignEditing)
 		dialog.setButtonClick({ok:true})
-		if (tasks.taskSignEditing) {
-			await tasks.updateTaskDatabase({mes:true })
-		} else {
-			await tasks.setTaskDatabase()
-		}
-		
-		await taskLists.getTaskList({id:route.params.id})
-		
 		dialog.toggleViewDialogVisible()
 	}
 

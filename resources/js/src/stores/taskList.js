@@ -86,6 +86,32 @@ export const useTaskListStore = defineStore('taskList', () => {
       }
     }
 
+     //получение данных списка по приглашению
+     async function getTaskListShare({id}) {
+      // const data = JSON.stringify(user)
+      try {
+        const config = {
+          method: 'get',
+          // maxBodyLength: Infinity,
+          url:`/api/tasklist/share/${id}`,
+          headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            // Authorization: `Bearer ${user.token}`,
+          },
+        }
+          await axios(config)
+            .then(({data})=>{
+              taskListSelect.value = data.data.taskList
+              tasks.setTasks( data.data.taskList.tasks)
+            })
+          return true
+      } catch (e) {
+        message.setMessageError( e.data )
+        return false
+      }
+    }
+
      //сохранение нового списка в базу
     async function setTaskListDatabase() {
       
@@ -167,7 +193,33 @@ export const useTaskListStore = defineStore('taskList', () => {
         return false
       }
     }
-
+    // tasklist/append/{id}
+    async function appendTaskListDatabase({id}) {
+     
+      try {
+        const config = {
+          method: 'post',
+          // maxBodyLength: Infinity,
+          url:`/api/tasklist/append/${id}`,
+          headers: { 
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`,
+          },
+          data: {
+            // "taskList": taskListSelectDelete.value
+          }
+        }
+        await axios(config)
+          .then(({data})=>{
+            message.setMessage(data)
+          })
+        return true
+      } catch (e) {
+         message.setMessageError( e )
+        return false
+      }
+    }
      //запись нулевого списка
     async function setNewTaskListCreate() {
       // projectsList.value = [newTaskListCreate.value]
@@ -213,6 +265,8 @@ export const useTaskListStore = defineStore('taskList', () => {
     setNewTaskListCreate,
     setTaskListCreate,
     setTaskListDatabase,
+    getTaskListShare,
+    appendTaskListDatabase
     
 
   }

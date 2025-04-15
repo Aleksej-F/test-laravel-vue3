@@ -11,7 +11,9 @@
                 @click="clickCheckTask()"
             />
         </label>
-        <div class="contentWrapper uncomplite">
+        <div class="contentWrapper" 
+            :class="{uncomplite:!item.complite, complite:item.complite}"
+        >
             <div class="content">
 					<div class="text">{{ item.text }}</div>
 					<div class="smallWrapper">
@@ -104,7 +106,12 @@ async function editTask(item) {
     dialog.setLayout('TheItemTaskNewVsDialog')
     dialog.toggleViewDialogVisible()
     message.setMenuVisible()
-    dialog.setDialogeDelete(false)
+    const result = await dialog.setDialogeDelete(false)
+    if (result) {
+        tasks.tasksSelectDelete = []
+        await tasks.updateTaskDatabase({mes:true })
+        await taskLists.getTaskList({id:route.params.id});
+    }
 }
 
 async function deleteTask(id) {

@@ -63,7 +63,11 @@ Route::middleware('auth:sanctum')
         Route::apiResource('tasks', TaskController::class );
         Route::post('tasklist/update',[TaskListController::class, "tasklistUpdate"]);
         Route::post('tasklist/share',[TaskListController::class, "tasklistShare"]);
+        Route::post('tasklist/append/{id}',[TaskListController::class, "tasklistAppend"]);
+       
 });
+
+Route::get('tasklist/share/{id}',[TaskListController::class, "getTasklistShare"]);
 
 Route::post('semdmail', [MailController::class, 'sendMail']);
 

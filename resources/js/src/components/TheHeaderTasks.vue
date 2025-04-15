@@ -133,11 +133,16 @@
 		}
 	})
 	
-	function clickAddTask (){
+	async function clickAddTask (){
 		tasks.setNewTaskCreate(route.params.id)
 		dialog.setLayout('TheItemTaskNewVsDialog')
    	dialog.toggleViewDialogVisible()
-		dialog.setDialogeDelete(false)
+		const result = await dialog.setDialogeDelete(false)
+    	if (result) {
+			tasks.tasksSelectDelete = []
+			await tasks.setTaskDatabase()
+			await taskLists.getTaskList({id:route.params.id});
+		}
 	}
 
 	function clickElementMenu(link){
@@ -173,7 +178,6 @@
 	}
 
 	function clickImemMenu(itemFunc){
-		console.log(itemFunc)
 		clickMenuNoVisible()
 		itemFunc()
 	}
@@ -202,7 +206,7 @@
     left: 0;
    
     margin: 0 auto;
-    width: 100vw;
+    width: 100%;
     /*height: 6rem;*/
     height: var(--header-height);
     z-index: 50;

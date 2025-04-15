@@ -237,7 +237,7 @@
     left: 0;
    
     margin: 0 auto;
-    width: 100vw;
+    width: 100%;
     /*height: 6rem;*/
     height: var(--header-height);
     z-index: 50;

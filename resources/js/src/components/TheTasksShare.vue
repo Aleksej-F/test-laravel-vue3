@@ -95,7 +95,7 @@
       
       if (user.autchUser) {
 
-        await taskLists.getTaskList({id:route.params.id});
+        await taskLists.getTaskListShare({id:route.params.id});
         
       }
   });
@@ -108,18 +108,11 @@
       setTimeout(() => (menuVisible.value = false), 1000);
   }
 
-  async function clickAddTask (){
+  function clickAddTask (){
     tasks.setNewTaskCreate(route.params.id)
     dialog.setLayout('TheItemTaskNewVsDialog')
+    dialog.setDialogeDelete(false)
     dialog.toggleViewDialogVisible()
-    const result = await dialog.setDialogeDelete(false)
-    
-    if (result) {
-      tasks.tasksSelectDelete = []
-      await tasks.setTaskDatabase()
-      await taskLists.getTaskList({id:route.params.id});
-    }
-    
   }
 </script>
 

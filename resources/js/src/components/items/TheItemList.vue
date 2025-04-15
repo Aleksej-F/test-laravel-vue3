@@ -54,14 +54,15 @@
 					>Удалить</li>
 					<li class="menu rounded-2"
 						title="Поделиться ссылкой на список в соцсетях"
-						
+						@click.stop="clickShareLink()"
 					>Поделиться</li>
-
-					
-
-				
 				</ul>
+				<SocialNetworkView 
+					:id="item.id"
+					v-if="socialViewVisible"
+				/>
 			</div>
+			
 		</div>
 	</div>
 </template>
@@ -74,13 +75,15 @@
 	import { useDialogStore } from "../../stores/dialog.js"
 	import { useTasksStore } from '../../stores/tasks.js'
 	import SocialNetworkView from '../ui/SocialNetworkView.vue'
+	
 	const message = useMessageStore()
   	const taskLists = useTaskListStore()
 	const dialog = useDialogStore()
 	const tasks = useTasksStore()
 
 	const showVisible = ref(false)
-		
+	const socialViewVisible = ref(false)
+	
 	const route = useRoute()
 	const router = useRouter()
 
@@ -88,9 +91,10 @@
 
 	
 	watch(()=> message.menuVisible, (menuVisible) => {
-		console.log(' item props.menuVisible - ', menuVisible)
+		// console.log(' item props.menuVisible - ', menuVisible)
 		if (menuVisible) {
 			showVisible.value = false
+			socialViewVisible.value = false
 		}
 	})
 
@@ -137,13 +141,22 @@
 	}
 
 	async function copyLinkTaskList(params) {
-		navigator.clipboard.writeText('Hello Alligator!')
-		.then(() => {
-			// Получилось!
-		})
-		.catch(err => {
-			console.log('Something went wrong', err);
-		});
+	// 	const url = encodeURIComponent(
+	// 		location.protocol + "//" + location.host + location.pathname + "tasklist/" + props.id
+	// 	);
+	// 	navigator.clipboard.writeText(url)
+	// 	.then(() => {
+	// 		// Получилось!
+	// 	})
+	// 	.catch(err => {
+	// 		console.log('Something went wrong', err);
+	// 	});
+	}
+
+	async function clickShareLink() {
+		socialViewVisible.value = !socialViewVisible.value
+		
+		
 	}
 </script>
 
@@ -260,7 +273,7 @@
 	opacity: 0;
 	visibility: hidden;
 	background-color: #fff;
-
+	width: 200px;
 	/*border: 1px #dee2e6 solid;*/
 	box-shadow: 0 .5rem 1rem rgba(33, 37, 41, .15);
 

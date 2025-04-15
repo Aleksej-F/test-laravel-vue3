@@ -137,6 +137,7 @@
 		tasks.setNewTaskCreate(route.params.id)
 		dialog.setLayout('TheItemTaskNewVsDialog')
    	dialog.toggleViewDialogVisible()
+		dialog.setDialogeDelete(false)
 	}
 
 	function clickElementMenu(link){

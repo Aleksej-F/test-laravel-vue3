@@ -111,6 +111,7 @@
   function clickAddTask (){
     tasks.setNewTaskCreate(route.params.id)
     dialog.setLayout('TheItemTaskNewVsDialog')
+    dialog.setDialogeDelete(false)
     dialog.toggleViewDialogVisible()
   }
 </script>

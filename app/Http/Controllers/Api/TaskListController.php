@@ -298,13 +298,13 @@ class TaskListController extends Controller
         
         try {
            $taskList = TaskList::find($id);
-           $taskList->tasks()->get();
            if (is_null($taskList) ){
                 return $this->json->error(
                     message: 'Список не найден!',
                     errors: 403
                 );
-           }
+           } 
+           $taskList->tasks()->get();
         } catch (\Throwable $e) {
             return $this->json->error(message: $e->getMessage());
         }
@@ -318,7 +318,7 @@ class TaskListController extends Controller
         );
         // tasklistAppend
     }
-    
+    // добавление списка для совместного использования
     public function tasklistAppend (string $id): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();

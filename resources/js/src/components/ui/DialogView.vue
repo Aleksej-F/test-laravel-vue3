@@ -17,7 +17,7 @@
 					@click.stop="yesClickDialog()"
 				>Да</div>
 				<div class="ok-button button-d" 
-					:class="{'disabled': tasks.getTaskSelectTextLength == 0, 'disabled':  !user.autchUser}"
+					:class="{'disabled': tasks.getTaskSelectTextLength == 0 || !user.autchUser}"
 					@click.stop="okClickDialog()"
 					v-else
 				>Ok</div>
@@ -68,13 +68,14 @@
 	)
 
 	function noClickDialog() {
-		dialog.toggleViewDialogVisible()
 		dialog.setButtonClick({ok:false})
+		dialog.toggleViewDialogVisible()
+		
 	}
 	
 	function yesClickDialog() {
-		dialog.toggleViewDialogVisible()
 		dialog.setButtonClick({ok:true})
+		dialog.toggleViewDialogVisible()
 	}
 
 	async function okClickDialog() {

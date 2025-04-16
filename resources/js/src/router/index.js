@@ -60,12 +60,7 @@ const router = createRouter({
       component: () => import('../views/Signup.vue'),
       props: true,
     },
-    {
-      path: '/admins-panel',
-      name: 'adminsPanel',
-      meta: {autch: true, loyout: 'Admin'},
-      component: () => import('../views/Admin/AdminsPanelView.vue'),
-    },
+   
    
    
   ]
@@ -82,8 +77,8 @@ router.beforeEach((to, from, next) => {
   
    console.log(from)
    console.log(to)
-  if ((to.name === 'logout' || to.name === 'logoutlink' || to.name ==='signup')
-    &(from.name !== 'logout' & from.name !== 'logoutlink' & from.name !=='signup')
+  if ((to.name === 'logout' || to.name === 'logoutlink' || to.name ==='signup' || to.name ==='login')
+    &(from.name !== 'logout' & from.name !== 'logoutlink' & from.name !=='signup' || to.name ==='login')
   
   ) {
     console.log("page true" )

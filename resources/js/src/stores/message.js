@@ -31,10 +31,11 @@ export const useMessageStore = defineStore('message', () => {
   }
 
   function setMessageError( e ) {
+    console.log(e)
     let mes = e.message ? `${e.message} <hr>` : ''
     
-    if (e.data && e.data.message) {
-      mes += `${e.data.message}!<hr>`
+    if (e.response.data && e.response.data.message) {
+      mes += `${e.response.data.message}!<hr>`
     }
 
     if (e.error) {
@@ -43,7 +44,7 @@ export const useMessageStore = defineStore('message', () => {
 
     // if (e.data.data) {
     //   message += `${e.data.data.message || ''}<hr>`
-    // }
+    // }/share/32
 
     message.value = {err:true, mes: mes}
     setIntevalTime ()

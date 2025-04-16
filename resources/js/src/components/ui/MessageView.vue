@@ -38,7 +38,7 @@
   
   const taskRout = computed(()=> {
     console.log(route.name)
-    return route.name == "taskList" 
+    return route.name == "taskList" || route.name == 'taskListShare'
   })
     
     function visibleFalse(){

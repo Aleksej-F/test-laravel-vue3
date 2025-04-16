@@ -83,7 +83,9 @@
       authorize.value = true
       setTimeout(() => 
         {
-          router.push({ name: 'home'})
+          const page = localStorage.getItem('pageLink') ?
+            localStorage.getItem('pageLink') : "/"
+          router.push({ path: page})
         }, 3000);
     }
   }

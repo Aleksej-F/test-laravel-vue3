@@ -61,6 +61,8 @@
   import { ref, computed } from 'vue'
   import CloseView from "../components/ui/CloseView.vue"
   import { useUsersStore } from '../stores/Users'
+  import { useMessageStore } from '../stores/message.js'
+  const message = useMessageStore()
   const router = useRouter()
   const users = useUsersStore()    
   
@@ -81,12 +83,22 @@
     
     if (res) {
       authorize.value = true
-      setTimeout(() => 
-        {
+      if ( message.message){
+        let timerId = setInterval(() => {
+          if (!message.message){
+            const page = localStorage.getItem('pageLink') ?
+              localStorage.getItem('pageLink') : "/"
+            router.push({ path: page})
+            clearTimeout(timerId)
+          }
+          }, 200);
+      } else {
+        setTimeout(async() => {
           const page = localStorage.getItem('pageLink') ?
             localStorage.getItem('pageLink') : "/"
           router.push({ path: page})
-        }, 3000);
+        }, 1000)
+      }
     }
   }
   

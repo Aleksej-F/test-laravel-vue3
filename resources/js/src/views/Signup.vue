@@ -77,6 +77,8 @@
   import { useUsersStore } from '../stores/Users'
   import { useRouter, useRoute } from 'vue-router'
   import CloseView from "../components/ui/CloseView.vue"
+  import { useMessageStore } from '../stores/message.js'
+  const message = useMessageStore()
   const router = useRouter()
 
   const users = useUsersStore()
@@ -104,10 +106,22 @@
     if (res) {
       clearForm()
       authorize.value = true
-      setTimeout(() => 
-        {
-          router.push({ name: 'admins-panel'})
-        }, 3000);
+      if ( message.message){
+          let timerId = setInterval(() => {
+              if (!message.message){
+                const page = localStorage.getItem('pageLink') ?
+                  localStorage.getItem('pageLink') : "/"
+                router.push({ path: page})
+                clearTimeout(timerId)
+              }
+          }, 200);
+      } else {
+          setTimeout(async() => {
+            const page = localStorage.getItem('pageLink') ?
+              localStorage.getItem('pageLink') : "/"
+            router.push({ path: page})
+          }, 2000);
+      }
     } 
   }
 

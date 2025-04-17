@@ -93,11 +93,7 @@
   
   onMounted(async () => {
       
-      if (user.autchUser) {
-
-        await taskLists.getTaskListShare({id:route.params.id});
-        
-      }
+      
   });
   function toogleTaskComplitedVisible() {
     taskComplitedVisible.value = !taskComplitedVisible.value

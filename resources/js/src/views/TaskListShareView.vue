@@ -13,28 +13,51 @@
     import TheTasksShare from '../components/TheTasksShare.vue'
     import { useDialogStore } from "../stores/dialog.js"
     import { useTaskListStore } from "../stores/taskList.js"
+    import { useMessageStore } from '../stores/message.js'
     
     const route = useRoute()
     const router = useRouter()
     const dialog = useDialogStore() 
     const taskLists = useTaskListStore()
+    const message = useMessageStore()
 
     onMounted(async () => {
-        setTimeout(async() => {
-            dialog.setLayout('TheItemTaskListShareVsDialog')
+        console.log('запрос')
+        const result = await taskLists.getTaskListShare({id:route.params.id});
+        console.log('ответ - ',result )
+
+        if (result) {
+            setTimeout(async() => {
+                dialog.setLayout('TheItemTaskListShareVsDialog')
+                
+                dialog.toggleViewDialogVisible()
+                const result = await dialog.setDialogeDelete(true)
+                if (result) {
+                    await taskLists.appendTaskListDatabase({id:route.params.id});
+                    setTimeout(async() => {
+                        router.push({ name: 'taskList', params: { id: route.params.id } })
+                    }, 2000);
+                }
             
-            dialog.toggleViewDialogVisible()
-            const result = await dialog.setDialogeDelete(true)
-            if (result) {
-                await taskLists.appendTaskListDatabase({id:route.params.id});
+            }, 2000);
+        }else  {
+            // http://testklass/tasklist/share/67
+            if ( message.message){
+                let timerId = setInterval(() => {
+                    if (!message.message){
+                        router.push({ name: 'home' })
+                        clearTimeout(timerId)
+                    }
+                }, 200);
+            } else {
                 setTimeout(async() => {
-                     router.push({ name: 'taskList', params: { id: route.params.id } })
-                 }, 2000);
+                    router.push({ name: 'home' })
+                }, 2000);
             }
-        
-        }, 2000);
-      
-  });
+
+           
+        }
+    });
 </script>
 
 <style lang="scss" scoped>

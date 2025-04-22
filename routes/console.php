@@ -17,3 +17,32 @@ use Illuminate\Support\Facades\Artisan;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('tester', function () {
+    /** @var \DefStudio\Telegraph\Models\TelegraphBot $bot */
+    $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(8);
+        
+    /*/шлет команды для меню*/
+    dd($bot->registerCommands([
+        'hello' => 'говорит привет',
+        'actions' => 'различные действия',
+        'help' => 'что умеет этот бот',
+        'shopping_list' => 'создать список покупок',
+        'open_lists' => 'открыть список'
+    ])->send());
+});
+
+Artisan::command('infobot', function () {
+    /** @var \DefStudio\Telegraph\Models\TelegraphBot $bot */
+    $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(8);
+    /*/ информация о боте*/
+    dd($bot->info());
+});
+
+Artisan::command('deletewebhook', function () {
+    /** @var \DefStudio\Telegraph\Models\TelegraphBot $bot */
+    $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(8 );
+    /*/ удаляет веб хук боте*/
+    dd($bot->unregisterWebhook()->send());
+});
+

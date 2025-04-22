@@ -152,6 +152,13 @@
 			visible: !userAutch.value,
 			func: clickUserLogin
 		},
+		{
+			name:'User',
+			link:'/login',
+			disabled: false,
+			visible: true,
+			func: visibleUser
+		},
 	])
 	watch(()=> message.menuVisible, (menuVisible) => {
 		// console.log('heder props.menuVisible - ', menuVisible)
@@ -195,6 +202,13 @@
 		clickMenuNoVisible()
 		itemFunc()
 	}
+	async function visibleUser(params) {
+		dialog.setLayout('TheItemUserVisibleVsDialog')
+		dialog.toggleViewDialogVisible()
+		message.setMenuVisible();
+		const result = await dialog.setDialogeDelete(true)
+	}
+
 
 	async function clickTaskListsDelete(params) {
 		dialog.setLayout('TheItemTaskListDeleteAllVsDialog')

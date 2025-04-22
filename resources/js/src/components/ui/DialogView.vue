@@ -41,7 +41,9 @@
 	import TheItemTaskListDeleteComletVsDialog from '../items/TheItemTaskListDeleteComletVsDialog.vue'
 	import TheItemTaskListDeleteVsDialog from '../items/TheItemTaskListDeleteVsDialog.vue'
 	import TheItemTaskListShareVsDialog from '../items/TheItemTaskListShareVsDialog.vue'
-
+	import TheItemUserVisibleVsDialog from '../items/TheItemUserVisibleVsDialog.vue'
+	
+	
 	const route = useRoute()
 
 	const taskLists = useTaskListStore();
@@ -60,7 +62,8 @@
 		TheItemTaskListDeleteAllVsDialog,
 		TheItemTaskListDeleteComletVsDialog,
 		TheItemTaskListDeleteVsDialog,
-		TheItemTaskListShareVsDialog
+		TheItemTaskListShareVsDialog,
+		TheItemUserVisibleVsDialog
   	})
 
 	const layout = computed(() => {

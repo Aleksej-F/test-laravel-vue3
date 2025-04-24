@@ -1,5 +1,6 @@
 <template>
   <MessageView/>
+  <MyLoader/>
   <!-- <MyConfirm/> -->
   <div class="backgraund">
     <RouterView />
@@ -8,6 +9,7 @@
 <script setup>
   import { RouterLink, RouterView } from 'vue-router'
   import MessageView from "../components/ui/MessageView.vue"
+  import MyLoader from '../components/ui/LoaderView.vue'
   // import MyConfirm from '../components/ui/MyConfirm.vue'
   
 </script>

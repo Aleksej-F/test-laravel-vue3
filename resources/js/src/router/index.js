@@ -54,6 +54,13 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/loginbottg',
+      name: 'loginbottg',
+      meta: {autch: false, loyout: 'Empty'},
+      component: () => import('../views/LoginBotTg.vue'),
+      props: true,
+    },
+    {
       path: '/signup',
       name: 'signup',
       meta: {autch: false, loyout: 'Empty'},

@@ -63,10 +63,24 @@ class AuthController
             //     'code'      =>  401,
             //     'message'   =>  'invalid password'
             // ), 401);
-            
-        
         }
-
-        
    }
+   //logoutbottg
+   public function logoutbottg(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
+        // $user = User::create($request->validated());
+        $user =  $request->input();
+        return $this->json->response(
+            [
+                '$bot' =>  $bot,
+                'user' => $user, 
+                'token'=> 'fdgdgdgdfgdfgdgdg'
+            ],
+            message: 'Успешная авторизация.',
+           
+            // 'token' => $user->createToken('api_token')->plainTextToken,
+           
+        );
+    }
 }

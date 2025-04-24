@@ -63,7 +63,7 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
   
- //авторизация на сайте
+  //авторизация на сайте
   async function setLogInUser(user) {
     const data = JSON.stringify(user)
     
@@ -97,7 +97,7 @@ export const useUsersStore = defineStore('users', () => {
       return reg
     } catch (e) {
       console.log("getRegistrationUser - ", e )
-      // dispatch('setMessageError', e)
+      message.setMessageError( e )
       return false
     }
   }
@@ -132,6 +132,44 @@ export const useUsersStore = defineStore('users', () => {
       // return reg   
     } catch (e) {
        message.setMessageError( e.data )
+      return false
+    }
+  }
+   //авторизация на сайте через бота тг
+   async function setLogInBotTgUser(user) {
+    const data = JSON.stringify(user)
+    
+    try {
+      const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url:'/api/v1/loginbottg',
+        headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        data: data 
+      }
+      const reg = await axios.get('/sanctum/csrf-cookie')
+        .then(response =>{
+          const res = axios(config)
+          .then((response)=>{
+            console.log("getloginUser - ", response )
+            token.value = response.data.data.token
+            localStorage.setItem('token', response.data.data.token);
+            return true
+          })
+          .catch( ({response})=> {
+            console.log("getloginUser  err - ", response.data )
+            message.setMessageError( response.data )
+            return false
+          })
+          return res
+      })
+      return reg
+    } catch (e) {
+      console.log("getRegistrationUser - ", e )
+      message.setMessageError( e.data )
       return false
     }
   }
@@ -187,7 +225,8 @@ export const useUsersStore = defineStore('users', () => {
     setRegistrationUser,
     setLogInUser,
     setLogout,
-
+    setLogInBotTgUser,
+    
     setTestZapros
   }
 })

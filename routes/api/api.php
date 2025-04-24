@@ -13,7 +13,8 @@ use App\Http\Controllers\Api\{
     TaskController,
     TaskListController,
     PHPMailerController,
-    UsersController
+    UsersController,
+    AuthThController 
 };
 /*
 |--------------------------------------------------------------------------
@@ -68,8 +69,10 @@ Route::middleware('auth:sanctum')
 });
 
 Route::get('tasklist/share/{id}',[TaskListController::class, "getTasklistShare"]);
-
+Route::get('{id}',[AuthThController ::class, "login"]);
 Route::post('semdmail', [MailController::class, 'sendMail']);
+Route::get('setmesseng',[AuthThController ::class, "setMesseng"]);
+
 
 // Route::prefix('v1')
 // ->as('api.')

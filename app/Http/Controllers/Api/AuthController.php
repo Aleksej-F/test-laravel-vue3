@@ -11,6 +11,7 @@ use App\Http\Requests\Api\PasswordRequest;
 use App\Contracts\ResponseContract;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserTg;
 
 class AuthController 
 {
@@ -70,11 +71,41 @@ class AuthController
     {
         $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
         // $user = User::create($request->validated());
-        $user =  $request->input();
+        $userTg =  $request->input();
+        $user =  UserTg::find($userTg['id']);
+        //  $user = UserTg::create($userTg);
+
+        define('BOT_TOKEN', $bot['token']); // place bot token of your bot here
+        
+        $check_hash = $userTg['hash'];
+        unset($userTg['hash']);
+        $data_check_arr = [];
+       
+       
+        foreach ($userTg as $key => $value) {
+            $data_check_arr[] = $key . '=' . $value;
+        }
+        sort($data_check_arr);
+        $data_check_string = implode("\n", $data_check_arr);
+        $autch = true;
+        $secret_key = hash('sha256', BOT_TOKEN, true);
+        $hash = hash_hmac('sha256', $data_check_string, $secret_key);
+        if (strcmp($hash, $check_hash) !== 0) {
+            $autch = false;
+        }
+
+
         return $this->json->response(
             [
                 '$bot' =>  $bot,
-                'user' => $user, 
+                'user' => $userTg,
+                '$user' => $user,
+                '$check_hash' => $check_hash,
+                '$data_check_string' => $data_check_string,
+                '$data_check_arr[]' => $data_check_arr,
+                '$autch' => $autch,
+                '$hash' => $hash,
+                // '$secret_key' => $secret_key,
                 'token'=> 'fdgdgdgdfgdfgdgdg'
             ],
             message: 'Успешная авторизация.',

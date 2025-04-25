@@ -33,7 +33,7 @@ class Handler extends WebhookHandler
         ->keyboard(
             Keyboard::make()->buttons([
                 Button::make('Перейти на сайт')->url('https://tasklist.ecostroi-spb.ru'),
-                Button::make('Перейти на сайт')->loginUrl('https://tasklist.ecostroi-spb.ru'),
+                Button::make('Перейти на сайт')->loginUrl('https://tasklist.ecostroi-spb.ru/loginbottg'),
                 Button::make('open')->webApp('https://tasklist.ecostroi-spb.ru'),
             ])
         )->send();

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use App\Models\UserTg;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -55,5 +55,10 @@ class User extends Authenticatable
     public function taskList(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(TaskList::class, 'user_task_lists');
+    }
+
+    public function userTg(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(userTg::class);
     }
 }

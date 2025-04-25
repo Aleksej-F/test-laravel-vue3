@@ -29,7 +29,7 @@ class AuthTgController extends Controller
         $chat = TelegraphChat::find(1);
         $chat->message('hello')->send();
 
-        define('BOT_TOKEN', 'XXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXX'); // place bot token of your bot here
+        define('BOT_TOKEN', $bot['token']); // place bot token of your bot here
         
         $check_hash = $request->input('hash');
         unset($request['hash']);
@@ -41,7 +41,7 @@ class AuthTgController extends Controller
           $data_check_string = implode("\n", $data_check_arr);
           $chat->message( $data_check_string)->send();
 
-        //   $secret_key = hash('sha256', BOT_TOKEN, true);
+        //    $secret_key = hash('sha256', BOT_TOKEN, true);
         //   $hash = hash_hmac('sha256', $data_check_string, $secret_key);
         
         

@@ -85,6 +85,7 @@ export const useUsersStore = defineStore('users', () => {
             console.log("getloginUser - ", response )
             token.value = response.data.data.token
             localStorage.setItem('token', response.data.data.token);
+            
             return true
           })
           .catch( ({response})=> {
@@ -154,9 +155,10 @@ export const useUsersStore = defineStore('users', () => {
         .then(response =>{
           const res = axios(config)
           .then((response)=>{
-            console.log("getloginUser - ", response )
+            console.log("getloginUser - ", response.data )
             token.value = response.data.data.token
             localStorage.setItem('token', response.data.data.token);
+            message.setMessage(response.data)
             return true
           })
           .catch( ({response})=> {

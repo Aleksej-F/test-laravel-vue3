@@ -59,6 +59,6 @@ class User extends Authenticatable
 
     public function userTg(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(userTg::class);
+        return $this->hasOne(UserTg::class);
     }
 }

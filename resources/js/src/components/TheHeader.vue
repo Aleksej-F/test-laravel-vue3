@@ -152,13 +152,13 @@
 			visible: !userAutch.value,
 			func: clickUserLogin
 		},
-		{
-			name:'User',
-			link:'/login',
-			disabled: false,
-			visible: true,
-			func: visibleUser
-		},
+		// {
+		// 	name:'User',
+		// 	link:'/login',
+		// 	disabled: false,
+		// 	visible: true,
+		// 	func: visibleUser
+		// },
 	])
 	watch(()=> message.menuVisible, (menuVisible) => {
 		// console.log('heder props.menuVisible - ', menuVisible)

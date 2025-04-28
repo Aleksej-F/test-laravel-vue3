@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use DefStudio\Telegraph\Models\TelegraphBot;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,7 @@ Artisan::command('inspire', function () {
 
 Artisan::command('tester', function () {
     /** @var \DefStudio\Telegraph\Models\TelegraphBot $bot */
-    $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
+    $bot = TelegraphBot::find(1);
         
     /*/шлет команды для меню*/
     dd($bot->registerCommands([
@@ -34,14 +35,14 @@ Artisan::command('tester', function () {
 
 Artisan::command('infobot', function () {
     /** @var \DefStudio\Telegraph\Models\TelegraphBot $bot */
-    $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
+    $bot = TelegraphBot::find(1);
     /*/ информация о боте*/
     dd($bot->info());
 });
 
 Artisan::command('deletewebhook', function () {
     /** @var \DefStudio\Telegraph\Models\TelegraphBot $bot */
-    $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
+    $bot = TelegraphBot::find(1);
     /*/ удаляет веб хук боте*/
     dd($bot->unregisterWebhook()->send());
 });

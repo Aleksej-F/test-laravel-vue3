@@ -81,7 +81,6 @@ class AuthController
         unset($userTg['hash']);
         $data_check_arr = [];
        
-       
         foreach ($userTg as $key => $value) {
             $data_check_arr[] = $key . '=' . $value;
         }
@@ -91,26 +90,38 @@ class AuthController
         $secret_key = hash('sha256', BOT_TOKEN, true);
         $hash = hash_hmac('sha256', $data_check_string, $secret_key);
         if (strcmp($hash, $check_hash) !== 0) {
-            $autch = false;
+            return $this->json->error(
+                message: 'Data is NOT from Telegram',
+                errors: 403
+            );
         }
 
+        if (is_null($user) ){
+            $user_autch = User::create( ['name' => $userTg['first_name']]);
+            $userTg['user_id'] = $user_autch['id'];
+            $user_autch_tg = UserTg::create( $userTg);
+        } else {
+            $user_autch = $user->user;
+        }
 
         return $this->json->response(
             [
-                '$bot' =>  $bot,
-                'user' => $userTg,
-                '$user' => $user,
-                '$check_hash' => $check_hash,
-                '$data_check_string' => $data_check_string,
-                '$data_check_arr[]' => $data_check_arr,
-                '$autch' => $autch,
-                '$hash' => $hash,
+                // '$bot' =>  $bot,
+                // 'user' => $userTg,
+                // '$user' => $user,
+                // '$check_hash' => $check_hash,
+                // '$data_check_string' => $data_check_string,
+                // '$data_check_arr[]' => $data_check_arr,
+                // '$autch' => $autch,
+                // '$user_autch' => $user_autch,
+                // '$hash' => $hash,
+                // '$user_autch_tg' => $user_autch_tg,
                 // '$secret_key' => $secret_key,
-                'token'=> 'fdgdgdgdfgdfgdgdg'
+                'token'=> $user_autch -> createToken('api_token')->plainTextToken
             ],
             message: 'Успешная авторизация.',
            
-            // 'token' => $user->createToken('api_token')->plainTextToken,
+          
            
         );
     }

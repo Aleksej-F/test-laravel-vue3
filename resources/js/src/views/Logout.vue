@@ -22,7 +22,10 @@
 <script setup>
   import CloseView from "../components/ui/CloseView.vue"
   import { useUsersStore } from '../stores/Users'
+  import { useTaskListStore } from '../stores/taskList.js'
   import { useRouter, RouterLink } from 'vue-router'
+  
+  const taskLists = useTaskListStore()
   const users = useUsersStore()
   const router = useRouter()
   
@@ -30,7 +33,7 @@
     const res = await users.setLogout()
     
     if (res) {
-      
+      taskLists.clearTaskLists()
       setTimeout(() => 
         {
           router.push({ name: 'login'})

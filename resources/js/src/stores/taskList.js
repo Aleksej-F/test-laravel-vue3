@@ -245,6 +245,9 @@ export const useTaskListStore = defineStore('taskList', () => {
     function settaskListSignEditing(attribute){
       taskListSignEditing.value = attribute
     }
+    function clearTaskLists() {
+      taskLists.value = []
+    }
 
   return { 
     newTaskListCreate,
@@ -267,8 +270,8 @@ export const useTaskListStore = defineStore('taskList', () => {
     setTaskListCreate,
     setTaskListDatabase,
     getTaskListShare,
-    appendTaskListDatabase
-    
+    appendTaskListDatabase,
+    clearTaskLists
 
   }
 })

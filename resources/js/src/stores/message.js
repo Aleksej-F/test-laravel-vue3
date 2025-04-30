@@ -34,7 +34,7 @@ export const useMessageStore = defineStore('message', () => {
     console.log(e)
     let mes = e.message ? `${e.message} <hr>` : ''
     
-    if (e.response.data && e.response.data.message) {
+    if (e.response && e.response.data && e.response.data.message) {
       mes += `${e.response.data.message}!<hr>`
     }
 

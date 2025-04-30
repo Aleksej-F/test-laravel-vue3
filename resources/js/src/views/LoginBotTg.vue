@@ -31,33 +31,33 @@
     loader.setIsLoaderStatus(true)
     let user = {}
     user = route.query
-    console.log('user.autchUser - ', route)
-    console.log('user.autchUser - ', user)
+    // console.log('user.autchUser - ', route)
+    // console.log('user.autchUser - ', user)
     // if (users.autchUser) {
     //   await taskLists.getTaskLists()
     // }
     
      const res = await users.setLogInBotTgUser(user)
      loader.setIsLoaderStatus(false)
+    //  console.log('user.autchUser res- ', res)
     if (res) {
       authorize.value = true
-      if ( message.message){
-        let timerId = setInterval(() => {
-          if (!message.message){
-            const page = localStorage.getItem('pageLink') ?
-              localStorage.getItem('pageLink') : "/"
-            router.push({ path: page})
-            clearTimeout(timerId)
-          }
-          }, 200);
-      } else {
-        setTimeout(async() => {
-          const page = localStorage.getItem('pageLink') ?
-            localStorage.getItem('pageLink') : "/"
-          router.push({ path: page})
-        }, 1000)
-      }
     }
+    if ( message.message){
+      let timerId = setInterval(() => {
+        if (!message.message){
+          const page = "/"
+          router.push({ path: page})
+          clearTimeout(timerId)
+        }
+        }, 200);
+    } else {
+      setTimeout(() => {
+        const page = "/"
+        router.push({ path: page})
+      }, 1000)
+    }
+    
   })
  
   

@@ -9,14 +9,11 @@ export const useUsersStore = defineStore('users', () => {
   
   const url = useConfigStore().url 
   
-  
   const token = ref(localStorage.getItem('token') ?
   localStorage.getItem('token') : null)
   const pageName = ref(localStorage.getItem('pageLink') ?
   localStorage.getItem('pageLink') : "/")
 
-  
- 
   const autchUser = computed(() => token.value !== null)
 
   function setToken(token) {
@@ -125,8 +122,6 @@ export const useUsersStore = defineStore('users', () => {
             token.value = null
             localStorage.removeItem('token');
           })
-          
-          
           return true
       // })
       
@@ -164,19 +159,20 @@ export const useUsersStore = defineStore('users', () => {
           .catch( ({response})=> {
             console.log("getloginUser  err - ", response.data )
             message.setMessageError( response.data )
-            return false
+            return response
           })
-          return res
+          return response
       })
-      return reg
+      return response
     } catch (e) {
       console.log("getRegistrationUser - ", e )
-      message.setMessageError( e.data )
+      // message.setMessageError( e )
       return false
     }
   }
-  
-   //тестирование запросов
+  //loginbottg?id=1201041133&first_name=Алексей&last_name=Федоров&username=F_Alexej&auth_date=1745363016&hash=d31861e2da1baccff7ad4d9bf9478bc4aaf12422afa9cc24a8058caa79e25fe8
+   
+  //тестирование запросов
    async function setTestZapros(test) {
     const data = JSON.stringify(test)
     

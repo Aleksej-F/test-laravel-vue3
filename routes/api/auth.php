@@ -1,7 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\{
+    AuthController,
+    AuthThController
+};
 
 Route::prefix('v1')
     ->as('auth.')
@@ -10,5 +13,6 @@ Route::prefix('v1')
         Route::post('login', [AuthController::class, 'login'])->name('login');
         Route::post('logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum'])->name('logout');
         Route::post('loginbottg', [AuthController::class, 'logoutbottg']);
+        Route::post('telegram/mini-app/auth', [AuthThController::class, 'authenticate'])->name('telegram.mini-app.auth');
         Route::middleware('auth:sanctum')->post('change_password', [AuthController::class, 'password'])->name('password');
     });

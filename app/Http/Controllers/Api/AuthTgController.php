@@ -11,21 +11,210 @@ use App\Http\Requests\Api\PasswordRequest;
 use App\Contracts\ResponseContract;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\UserTg;
 use DefStudio\Telegraph\Models\TelegraphChat;
+use DefStudio\Telegraph\Models\TelegraphBot;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AuthTgController extends Controller
 {
     // define('BOT_TOKEN', 'XXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXX'); // place bot token of your bot here
-    
+    /**
+     * Ключ бота, полученный от BotFather.
+     * **Важно:** Храните его в .env файле и не коммитьте в репозиторий!
+     */
+    private string $botToken;
     
     public function __construct(public ResponseContract $json)
     {
+        $bot = TelegraphBot::find(1);
+        $this->botToken = $bot['token'];
+        // $this->botToken = env('TELEGRAM_BOT_TOKEN', '');  // Получаем из .env, если не установлен - пустая строка
+        if (empty($this->botToken)) {
+            Log::error('TELEGRAM_BOT_TOKEN is not set in .env file.');
+            // Можно выбросить исключение или предпринять другие действия
+        }
     }
-    
+     /**
+     * Обрабатывает запрос от Telegram Mini App.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function authenticate(Request $request)
+    {
+        Log::info('Mini App Request:', $request->all());
+
+        $initData = $request->input('initData'); // Получаем строку initData
+        $user = null;
+
+        if (empty($initData)) {
+            Log::warning('initData is empty.');
+            // return response()->json(['error' => 'initData is required'], 400);
+            return $this->json->error(
+                message: 'initData is required',
+                errors: 403
+            );
+        }
+
+        try {
+            // 1. Валидация initData
+            $valid = $this->validateInitData($initData, $this->botToken);
+
+            if (!$valid) {
+                Log::warning('Invalid initData.');
+                // return response()->json(['error' => 'Invalid initData'], 401);
+                return $this->json->error(
+                    message: 'Invalid initData',
+                    errors: 401
+                );
+            }
+
+            // 2. Извлечение информации о пользователе (если есть)
+            $userData = $this->extractUserData($initData);
+
+            if ($userData) {
+                // 3. Авторизация пользователя (или создание, если его нет)
+                $user = $this->authenticateOrCreateUser($userData);
+
+                // 4. Создание токена (например, с использованием Sanctum)
+                $token = $user->createToken('telegram-mini-app')->plainTextToken;
+
+                Log::info('User authenticated/created successfully. User ID: ' . $user->id);
+
+                return response()->json([
+                    'token' => $token,
+                    'user' => $user, // Можно вернуть данные пользователя
+                ]);
+            } else {
+                Log::info('No user data found in initData (e.g., user opened the mini app without authorization).');
+                // Если нет данных о пользователе, это может быть неавторизованный доступ
+                return response()->json(['message' => 'No user data found.'], 200); // Можно вернуть сообщение или redirect
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Mini App Authentication Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Authentication failed'], 500);
+        }
+    }
+
+    /**
+     * Валидирует initData, полученный от Telegram.
+     *
+     * @param  string  $initData
+     * @param  string  $botToken
+     * @return bool
+     */
+    private function validateInitData(string $initData, string $botToken): bool
+    {
+        // 1. Разбиваем строку initData на параметры
+        $params = [];
+        parse_str(str_replace('?', '', $initData), $params); // Удаляем "?" если есть
+
+        // 2. Проверяем наличие параметра "hash"
+        if (!isset($params['hash'])) {
+            Log::warning('Missing "hash" parameter in initData.');
+            return false;
+        }
+
+        $hash = $params['hash'];
+        unset($params['hash']); // Удаляем "hash" из массива параметров
+
+        // 3. Сортируем параметры по ключу (в алфавитном порядке)
+        ksort($params);
+
+        // 4. Формируем строку данных для проверки (data-check-string)
+        $dataCheckString = [];
+        foreach ($params as $key => $value) {
+            $dataCheckString[] = $key . '=' . $value;
+        }
+        $dataCheckString = implode("\n", $dataCheckString);
+
+        // 5. Вычисляем HMAC-SHA-256
+        $secretKey = hash('sha256', $botToken, true);
+        $hmac = hash_hmac('sha256', $dataCheckString, $secretKey);
+
+        // 6. Сравниваем вычисленный HMAC с полученным "hash"
+        $isValid = hash_equals($hmac, $hash);
+
+        if (!$isValid) {
+            Log::warning('HMAC hash mismatch.  Possible tampering.');
+        }
+
+        return $isValid;
+    }
+
+    /**
+     * Извлекает данные пользователя из initData.
+     * Возвращает null, если данные о пользователе отсутствуют.
+     *
+     * @param  string  $initData
+     * @return array|null
+     */
+    private function extractUserData(string $initData): ?array
+    {
+        $params = [];
+        parse_str(str_replace('?', '', $initData), $params);
+
+        if (isset($params['user'])) {
+            try {
+                // Декодируем JSON строку с данными пользователя
+                $user = json_decode($params['user'], true);
+                return $user;
+            } catch (\Exception $e) {
+                Log::error('Error decoding user data: ' . $e->getMessage());
+                return null; // Ошибка декодирования JSON
+            }
+        }
+
+        return null; // Нет данных о пользователе
+    }
+
+    /**
+     * Аутентифицирует или создает пользователя на основе данных из Telegram.
+     *
+     * @param  array  $userData
+     * @return \App\Models\User
+     */
+    private function authenticateOrCreateUser(array $userData): \App\Models\User
+    {
+        // 1. Ищем пользователя по telegram_id (или другому уникальному идентификатору)
+        $user = User::where('telegram_id', $userData['id'])->first();
+
+        if ($user) {
+            // 2. Обновляем данные пользователя (если необходимо)
+            $user->update([
+                'first_name' => $userData['first_name'] ?? null, // Добавляем ?? null для случаев, когда поле отсутствует
+                'last_name' => $userData['last_name'] ?? null,
+                'username' => $userData['username'] ?? null,
+                'language_code' => $userData['language_code'] ?? null, // Добавляем новый параметр
+                // Другие поля
+            ]);
+            Log::info('User data updated. User ID: ' . $user->id);
+
+        } else {
+            // 3. Создаем нового пользователя
+            $user = User::create([
+                'telegram_id' => $userData['id'],
+                'first_name' => $userData['first_name'] ?? null,
+                'last_name' => $userData['last_name'] ?? null,
+                'username' => $userData['username'] ?? null,
+                'language_code' => $userData['language_code'] ?? null, // Добавляем новый параметр
+                'password' => Hash::make(Str::random(40)), // Генерируем случайный пароль
+                // Другие поля
+            ]);
+
+            Log::info('New user created. User ID: ' . $user->id);
+        }
+
+        return $user;
+    }
     public function login(Request $request): \Illuminate\Http\JsonResponse
     {
-        $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
+        $bot = TelegraphBot::find(1);
         $chat = TelegraphChat::find(1);
         $chat->message('hello')->send();
 

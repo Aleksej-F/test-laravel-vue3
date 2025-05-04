@@ -69,6 +69,7 @@ Route::middleware('auth:sanctum')
 });
 
 Route::get('tasklist/share/{id}',[TaskListController::class, "getTasklistShare"]);
+
 Route::get('{id}',[AuthThController ::class, "login"]);
 Route::post('semdmail', [MailController::class, 'sendMail']);
 Route::get('setmesseng',[AuthThController ::class, "setMesseng"]);

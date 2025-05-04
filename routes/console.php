@@ -28,7 +28,7 @@ Artisan::command('tester', function () {
         'hello' => 'говорит привет',
         'actions' => 'различные действия',
         'help' => 'что умеет этот бот',
-        'shopping_list' => 'создать список покупок',
+        'create_shopping_list' => 'создать список покупок',
         'open_lists' => 'открыть список'
     ])->send());
 });

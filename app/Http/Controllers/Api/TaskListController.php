@@ -61,9 +61,7 @@ class TaskListController extends Controller
         $user->taskList()->save($taskList);
         return $this->json->response(
             data: [
-               
                 'taskListNew' => $taskList,
-            
             ],
             message: 'Список создан',
         );
@@ -149,7 +147,7 @@ class TaskListController extends Controller
 
     //	1|17t6kJeNDeH6hB7PA0xfALcBK2nyvvCVRSmNrMNM9a011cb7
     //  5|zDwqN2Y7LLY1OfeAUuSgzlwTNvb6IAzWQAORaEEz79601cbe
-
+    //удаление списков
     public function destroy(Request $request, $id): \Illuminate\Http\JsonResponse
     {   
         $user = Auth::user();
@@ -212,7 +210,7 @@ class TaskListController extends Controller
         );
    
     }
-
+    //синхронизация списков
     public function tasklistUpdate(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
@@ -276,7 +274,7 @@ class TaskListController extends Controller
             $taskList->users()->attach($userShare['id']);
         } else{
             return   $this->json->error(
-                message: 'Укажите, принадлежащий Вам, спискок!',
+                message: 'Укажите, принадлежащий Вам, список!',
                 errors: 403
             ); 
         }
@@ -322,18 +320,24 @@ class TaskListController extends Controller
     public function tasklistAppend (string $id): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
-       
-        
-        try {
-          // обновление записей в промежуточной таблице
-             $user->taskList()->attach([$id]);
-        } catch (\Throwable $e) {
-            return $this->json->error(message: $e->getMessage());
+        $taskList = $user->taskList()->find($id);
+        if (is_null($taskList)){
+            try {
+            // обновление записей в промежуточной таблице
+                $user->taskList()->attach([$id]);
+            } catch (\Throwable $e) {
+                return $this->json->error(message: $e->getMessage());
+            }
+        } else {
+            return   $this->json->error(
+                message: 'У Вас уже есть этот список!',
+                errors: 403
+            ); 
         }
-       
         return $this->json->response(
             data: [
                 'taskList' => [],
+                '$taskList' => $taskList,
                 
             ],
             message: "Список успешно добавлен.",

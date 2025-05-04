@@ -7,9 +7,11 @@
  <title>Че купить</title>
  <meta property="title" content="Покупки | Задачи | Дела">
  <meta property="description" content="Помощник для планирования и контроля задач, покупок.">
+ <script src="https://telegram.org/js/telegram-web-app.js"></script>
  @vite('resources/js/app.js')
 </head>
 <body>
   <div id="app"></div>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </body>
 </html>

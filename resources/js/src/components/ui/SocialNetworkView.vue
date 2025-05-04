@@ -10,7 +10,8 @@
                   :href="item.href" class="social-share__item" 
                   :class="'social-share__item_'+ item.name "
                   :title="item.title" 
-                  @click.stop="item.onclick">
+                 >
+                 <!-- @click.stop="item.onclick" -->
                </a>
             </div>
         </div>
@@ -56,10 +57,18 @@
                 onclick:()=>{
                     window.open(this.href, 'ВКонтакте', 'width=800,height=300,toolbar=0,status=0'); return false},
             },
+            // {
+            //     name: "telegram",
+            //     title: "Telegram",
+            //     href: "https://t.me/share/url?url=" + url + "&title=" + title,
+            //     onclick:()=>{
+            //         window.open(this.href, 'Telegram', 'width=800,height=300,toolbar=0,status=0'); return false},
+            // },
             {
                 name: "telegram",
                 title: "Telegram",
-                href: "https://t.me/share/url?url=" + url + "&title=" + title,
+                href: "https://t.me/" + import.meta.env.VITE_APP_BOT_USERNAME + "?start=" + "share_" + props.id,
+                // "https://t.me/share/url?url=" + url + "&title=" + title,
                 onclick:()=>{
                     window.open(this.href, 'Telegram', 'width=800,height=300,toolbar=0,status=0'); return false},
             },
@@ -77,8 +86,8 @@
             console.log('Something went wrong', err);
          });
       }   
-
-      
+      console.log(import.meta.env)
+     
    });
 
 </script>

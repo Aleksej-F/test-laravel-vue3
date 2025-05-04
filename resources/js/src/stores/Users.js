@@ -171,7 +171,46 @@ export const useUsersStore = defineStore('users', () => {
     }
   }
   //loginbottg?id=1201041133&first_name=Алексей&last_name=Федоров&username=F_Alexej&auth_date=1745363016&hash=d31861e2da1baccff7ad4d9bf9478bc4aaf12422afa9cc24a8058caa79e25fe8
-   
+  
+  //авторизация mini app
+   async function setMiniAppAutch(initData) {
+    const data = JSON.stringify(initData)
+    
+    try {
+      const config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url:'/api/v1/telegram/mini-app/auth',
+        headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        data: data 
+      }
+      const reg = await axios.get('/sanctum/csrf-cookie')
+        .then(response =>{
+          const res = axios(config)
+          .then((response)=>{
+            console.log("getloginUser - ", response.data )
+            token.value = response.data.data.token
+            localStorage.setItem('token', response.data.data.token);
+            message.setMessage(response.data)
+            return true
+          })
+          .catch( ({response})=> {
+            console.log("getloginUser  err - ", response.data )
+            message.setMessageError( response.data )
+            return response
+          })
+          return response
+      })
+      return response
+    } catch (e) {
+      console.log("getRegistrationUser - ", e )
+      // message.setMessageError( e )
+      return false
+    }
+  }
   //тестирование запросов
    async function setTestZapros(test) {
     const data = JSON.stringify(test)
@@ -225,6 +264,7 @@ export const useUsersStore = defineStore('users', () => {
     setLogout,
     setLogInBotTgUser,
     
-    setTestZapros
+    setTestZapros,
+    setMiniAppAutch
   }
 })

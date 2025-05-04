@@ -61,6 +61,21 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/loginbottg/tasklist/share/:id',
+      name: 'botShare',
+      meta: {autch: false, loyout: 'Empty'},
+      component: () => import('../views/LoginBotTg.vue'),
+      props: true,
+    },
+    {
+      path: '/miniappautch',
+      name: 'miniAppAutch',
+      meta: {autch: false, loyout: 'Empty'},
+      component: () => import('../views/MiniAppAutch.vue'),
+      props: true,
+    },
+   
+    {
       path: '/signup',
       name: 'signup',
       meta: {autch: false, loyout: 'Empty'},

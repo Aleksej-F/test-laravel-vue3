@@ -28,35 +28,46 @@
   const authorize = ref(false)
     
   onMounted(async() => {
+    const initData = window.Telegram.WebApp.initData ;
     loader.setIsLoaderStatus(true)
     let user = {}
     user = route.query
-    // console.log('user.autchUser - ', route)
-    // console.log('user.autchUser - ', user)
-    // if (users.autchUser) {
-    //   await taskLists.getTaskLists()
-    // }
     
-     const res = await users.setLogInBotTgUser(user)
-     loader.setIsLoaderStatus(false)
-    //  console.log('user.autchUser res- ', res)
-    if (res) {
-      authorize.value = true
-    }
-     
-    if ( message.message){
-      let timerId = setInterval(() => {
-        if (!message.message){
-          const page = route.name == "botShare" ? route.path.substr(11):"/"
+    //     /miniappautch
+
+    console.log('users.autchUser - ', users.autchUser)
+    console.log('initData - ', initData)
+    // console.log('user.autchUser - ', user)
+    message.setMessage({message: initData})
+    if (users.autchUser) {
+      loader.setIsLoaderStatus(false)
+      router.push({ path: '/'})
+      return
+    
+    } else{
+      const res = await users.setMiniAppAutch(initData)
+
+      loader.setIsLoaderStatus(false)
+      console.log('user.autchUser res- ', res)
+      if (res) {
+        authorize.value = true
+      }
+      
+      if ( message.message){
+        let timerId = setInterval(() => {
+          if (!message.message){
+            const page = "/"
+            router.push({ path: page})
+            clearTimeout(timerId)
+          }
+          }, 200);
+      } else {
+        setTimeout(() => {
+          const page = "/"
           router.push({ path: page})
-          clearTimeout(timerId)
-        }
-        }, 200);
-    } else {
-      setTimeout(() => {
-        const page = route.name == "botShare" ? route.path.substr(11):"/"
-        router.push({ path: page})
-      }, 1000)
+        }, 1000)
+      }
+
     }
     
   })

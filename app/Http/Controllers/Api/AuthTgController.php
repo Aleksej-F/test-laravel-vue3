@@ -44,6 +44,8 @@ class AuthTgController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+     //  /miniappautch
     public function authenticate(Request $request)
     {
         Log::info('Mini App Request:', $request->all());
@@ -81,14 +83,16 @@ class AuthTgController extends Controller
                 $user = $this->authenticateOrCreateUser($userData);
 
                 // 4. Создание токена (например, с использованием Sanctum)
-                $token = $user->createToken('telegram-mini-app')->plainTextToken;
+                $token = $user->createToken('api_token')->plainTextToken;
 
                 Log::info('User authenticated/created successfully. User ID: ' . $user->id);
 
-                return response()->json([
+                return $this->json->response([
                     'token' => $token,
                     'user' => $user, // Можно вернуть данные пользователя
-                ]);
+                ],
+                message: 'Успешная авторизация.',
+            );
             } else {
                 Log::info('No user data found in initData (e.g., user opened the mini app without authorization).');
                 // Если нет данных о пользователе, это может быть неавторизованный доступ
@@ -113,7 +117,8 @@ class AuthTgController extends Controller
         // 1. Разбиваем строку initData на параметры
         $params = [];
         parse_str(str_replace('?', '', $initData), $params); // Удаляем "?" если есть
-
+        Log::info($params);
+        Log::info('$botToken = '. $botToken);
         // 2. Проверяем наличие параметра "hash"
         if (!isset($params['hash'])) {
             Log::warning('Missing "hash" parameter in initData.');
@@ -124,7 +129,7 @@ class AuthTgController extends Controller
         unset($params['hash']); // Удаляем "hash" из массива параметров
 
         // 3. Сортируем параметры по ключу (в алфавитном порядке)
-        ksort($params);
+        sort($params);
 
         // 4. Формируем строку данных для проверки (data-check-string)
         $dataCheckString = [];
@@ -138,8 +143,8 @@ class AuthTgController extends Controller
         $hmac = hash_hmac('sha256', $dataCheckString, $secretKey);
 
         // 6. Сравниваем вычисленный HMAC с полученным "hash"
-        $isValid = hash_equals($hmac, $hash);
-
+        // $isValid = hash_equals($hmac, $hash);
+        $isValid = strcmp($hmac, $hash);
         if (!$isValid) {
             Log::warning('HMAC hash mismatch.  Possible tampering.');
         }
@@ -182,35 +187,17 @@ class AuthTgController extends Controller
     private function authenticateOrCreateUser(array $userData): \App\Models\User
     {
         // 1. Ищем пользователя по telegram_id (или другому уникальному идентификатору)
-        $user = User::where('telegram_id', $userData['id'])->first();
-
-        if ($user) {
-            // 2. Обновляем данные пользователя (если необходимо)
-            $user->update([
-                'first_name' => $userData['first_name'] ?? null, // Добавляем ?? null для случаев, когда поле отсутствует
-                'last_name' => $userData['last_name'] ?? null,
-                'username' => $userData['username'] ?? null,
-                'language_code' => $userData['language_code'] ?? null, // Добавляем новый параметр
-                // Другие поля
-            ]);
-            Log::info('User data updated. User ID: ' . $user->id);
-
+        // $user = User::where('telegram_id', $userData['id'])->first();
+        $user =  UserTg::find($userData['id']);
+        if (is_null($user) ){
+            $user_autch = User::create( ['name' => $userData['first_name']]);
+            $userData['user_id'] = $user_autch['id'];
+            $user_autch_tg = UserTg::create( $userData);
         } else {
-            // 3. Создаем нового пользователя
-            $user = User::create([
-                'telegram_id' => $userData['id'],
-                'first_name' => $userData['first_name'] ?? null,
-                'last_name' => $userData['last_name'] ?? null,
-                'username' => $userData['username'] ?? null,
-                'language_code' => $userData['language_code'] ?? null, // Добавляем новый параметр
-                'password' => Hash::make(Str::random(40)), // Генерируем случайный пароль
-                // Другие поля
-            ]);
-
-            Log::info('New user created. User ID: ' . $user->id);
+            $user_autch = $user->user;
         }
 
-        return $user;
+        return  $user_autch;
     }
     public function login(Request $request): \Illuminate\Http\JsonResponse
     {

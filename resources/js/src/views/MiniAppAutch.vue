@@ -1,6 +1,8 @@
 <template>
   <section class="wrapper">
-     
+    
+      
+    
     
   </section>
 </template>
@@ -26,19 +28,22 @@
   const password = ref('')
   const checkbox = ref(false)
   const authorize = ref(false)
-    
+  
   onMounted(async() => {
-    const initData = window.Telegram.WebApp.initData ;
-    loader.setIsLoaderStatus(true)
+    const initData = JSON.stringify({
+        initData: window.Telegram.WebApp.initData ,
+    }) ;
+     loader.setIsLoaderStatus(true)
     let user = {}
     user = route.query
     
+    
     //     /miniappautch
 
-    console.log('users.autchUser - ', users.autchUser)
-    console.log('initData - ', initData)
+    // console.log('users.autchUser - ', users.autchUser)
+    // console.log('initData - ', initData)
     // console.log('user.autchUser - ', user)
-    message.setMessage({message: initData})
+    // message.setMessage({message: initData})
     if (users.autchUser) {
       loader.setIsLoaderStatus(false)
       router.push({ path: '/'})
@@ -46,7 +51,7 @@
     
     } else{
       const res = await users.setMiniAppAutch(initData)
-
+      // const res = await users.setLogInBotTgUser(initData)
       loader.setIsLoaderStatus(false)
       console.log('user.autchUser res- ', res)
       if (res) {

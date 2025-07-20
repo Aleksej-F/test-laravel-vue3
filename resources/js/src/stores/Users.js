@@ -117,11 +117,13 @@ export const useUsersStore = defineStore('users', () => {
       }
       // const reg = await axios.get('/sanctum/csrf-cookie')
       //   .then(response =>{
+          token.value = null
+          localStorage.removeItem('token');
           await axios(config)
           .then((response)=>{
-            token.value = null
-            localStorage.removeItem('token');
+            
           })
+          
           return true
       // })
       
@@ -185,7 +187,7 @@ export const useUsersStore = defineStore('users', () => {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        data: data 
+        data: initData
       }
       const reg = await axios.get('/sanctum/csrf-cookie')
         .then(response =>{

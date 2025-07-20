@@ -12,7 +12,7 @@ use App\Contracts\ResponseContract;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserTg;
-
+use Illuminate\Support\Facades\Log;
 class AuthController 
 {
     public function __construct(public ResponseContract $json)
@@ -71,7 +71,10 @@ class AuthController
     {
         $bot = \DefStudio\Telegraph\Models\TelegraphBot::find(1);
         // $user = User::create($request->validated());
+        
+        Log::info(json_encode($request->all(), flags: JSON_UNESCAPED_UNICODE));
         $userTg =  $request->input();
+
         $user =  UserTg::find($userTg['id']);
         //  $user = UserTg::create($userTg);
 

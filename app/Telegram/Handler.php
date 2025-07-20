@@ -23,9 +23,9 @@ class Handler extends WebhookHandler
 
     public function help(): void
     { 
-        $messsss = $this->message->toArray();
-        $chat_test = $messsss['chat']['id'];
-        $chat = $this->chat;
+        // $messsss = $this->message->toArray();
+        // $chat_test = $messsss['chat']['id'];
+        // $chat = $this->chat;
         // if (($chat_test == 1201041131) or ($chat_test == -1002363116448)){
 
        
@@ -35,7 +35,7 @@ class Handler extends WebhookHandler
             // $chat = TelegraphChat::find(2);
             // $chat = $messsss['chat'];
             
-            $this->reply(json_encode( $chat->memberCount(), flags: JSON_UNESCAPED_UNICODE));
+            // $this->reply(json_encode( $chat->memberCount(), flags: JSON_UNESCAPED_UNICODE));
             // $chat = new TelegraphChat($messsss['chat']['id']);
             // $chat = TelegraphChat::find(13);
             // $chat->withData('caption', 'test')->message('hello')->send();
@@ -50,7 +50,7 @@ class Handler extends WebhookHandler
         
 
          // ID вашей группы Telegram
-         $groupId = $messsss['chat']['id']; // Укажите реальный идентификатор вашей группы
+        //  $groupId = $messsss['chat']['id']; // Укажите реальный идентификатор вашей группы
         //  $groupId = Telegraph::chatInfo();
         //  $this->reply(json_encode( Telegraph::chatInfo()->send(), flags: JSON_UNESCAPED_UNICODE));
         //  Telegraph::chatInfo()->send();
@@ -59,7 +59,7 @@ class Handler extends WebhookHandler
         //      $response = Telegraph::getChatMemberCount($groupId);
         //      $this->reply(json_encode($response, flags: JSON_UNESCAPED_UNICODE));
         //      if ($response->telegraphOk()) {
-        //          $membersCount = $response->getResult();
+        //          $membersCount = $response->getResult(); @Why_buy_lists_bot
                  
         //          // Получение полной информации обо всех участниках
         //          $responseAllMembers = Telegraph::getChatMembers($groupId);
@@ -77,15 +77,15 @@ class Handler extends WebhookHandler
         //     $this->reply(json_encode(['error' => $e->getMessage()], flags: JSON_UNESCAPED_UNICODE));
         //  }
          
-         $this->reply('Failed to fetch group members');
+        //  $this->reply('Failed to fetch group members');
          
     }
     public function open_lists(): void
     {
-       $this->reply(json_encode($this->message->toArray(), flags: JSON_UNESCAPED_UNICODE));
+    //    $this->reply(json_encode($this->message->toArray(), flags: JSON_UNESCAPED_UNICODE));
     //    $chat = TelegraphChat::find(44);
     //    $chatSet =  new TelegraphChat($this->message->chat);
-    //  $this->reply(json_encode($this->message->chat->toArray(), flags: JSON_UNESCAPED_UNICODE));
+     $this->reply('Я этому еще учусь');
     //    Telegraph::message('Выбери какое-то действие')
     //     ->keyboard(
     //         Keyboard::make()->buttons([
@@ -96,6 +96,8 @@ class Handler extends WebhookHandler
       
         // $this->url('https://tasklist.ecostroi-spb.ru');
         //Button::make('Перейти на сайт')->loginUrl('https://login.url.dev');
+       
+
     }
     public function actions(): void
     {
@@ -107,7 +109,7 @@ class Handler extends WebhookHandler
             Keyboard::make()->buttons([
                 Button::make('Перейти на сайт')->url('https://tasklist.ecostroi-spb.ru'),
                 Button::make('Авторизоваться на сайте')->loginUrl('https://tasklist.ecostroi-spb.ru/loginbottg'),
-                $chat_test > 0 ? Button::make('open')->webApp('https://tasklist.ecostroi-spb.ru'): Button::make('')->action(''),
+                $chat_test > 0 ? Button::make('Open mini App')->webApp('https://tasklist.ecostroi-spb.ru/miniappautch'): Button::make('')->action(''),
             ])
         )->send();
         // Telegraph::message('Выбери какое-то действие')

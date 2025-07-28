@@ -14,7 +14,8 @@ use App\Http\Controllers\Api\{
     TaskListController,
     PHPMailerController,
     UsersController,
-    AuthTgController 
+    AuthTgController,
+    ReportController 
 };
 /*
 |--------------------------------------------------------------------------
@@ -65,7 +66,7 @@ Route::middleware('auth:sanctum')
         Route::post('tasklist/update',[TaskListController::class, "tasklistUpdate"]);
         Route::post('tasklist/share',[TaskListController::class, "tasklistShare"]);
         Route::post('tasklist/append/{id}',[TaskListController::class, "tasklistAppend"]);
-       
+        Route::apiResource('report', ReportController ::class);
 });
 
 Route::get('tasklist/share/{id}',[TaskListController::class, "getTasklistShare"]);

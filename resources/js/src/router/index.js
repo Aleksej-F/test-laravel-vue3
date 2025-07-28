@@ -32,7 +32,12 @@ const router = createRouter({
       meta: {autch: false,},
       component: () => import('../views/TaskListView.vue'),
     },
-    
+    {
+      path: '/report/:id',
+      name: 'report',
+      meta: {autch: true,},
+      component: () => import('../views/ReportView.vue'),
+    },
     {
       path: '/tasklist/share/:id',
       name: 'taskListShare',

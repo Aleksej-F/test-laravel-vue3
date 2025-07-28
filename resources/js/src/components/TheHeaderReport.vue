@@ -7,13 +7,14 @@
 		<DialogView/>
 		
 
-		<div class="header tasks">
+		<div class="header report">
 			<div class="headerLine">
-				<RouterLink to="/">
+				<RouterLink :to="'/tasklist/'+route.params.id">
 					<div id="headerBackButton" class="headerButtons rounded-2">
 						<img src="../assets/img/icons/arrow_back_black_24dp.svg">
 					</div>
 				</RouterLink>	
+				Отчет
 				<div id="tasksMenuButton" class="headerButtons rounded-2 light"
 					@click.stop="clickMenuButton()"
 				>
@@ -33,9 +34,6 @@
 						</li>
 					</ul>
 				</div>
-			
-				
-				
 			</div>
 			<div class="headerLine title">
 				<h6 id="tasksTitle">{{ taskLists.taskListSelect.text }}</h6>
@@ -82,34 +80,34 @@
 	const userAutch = computed(() => user.token !== null)
 		
 	const listMenu = ref ([
-		{
-			name:'Добавить задачу',
-			link:'/',
-			disabled: false,
-			visible: true,
-			func: clickAddTask
-		},
-		{
-			name:'Отчет',
-			link:'/',
-			disabled: false,
-			visible: true,
-			func: clickReport
-		},
-		{
-			name:'Удалить всё',
-			link:'/',
-			disabled: existence,
-			visible: true,
-			func: clickTasksDelete
-		},
-		{
-			name:'Удалить завершённые',
-			link:'/',
-			disabled: tasksComleted,
-			visible: true,
-			func: clickDeleteTasksCompleted
-		},
+		// {
+		// 	name:'Добавить задачу',
+		// 	link:'/',
+		// 	disabled: false,
+		// 	visible: true,
+		// 	func: clickAddTask
+		// },
+		// {
+		// 	name:'Отчет',
+		// 	link:'/',
+		// 	disabled: false,
+		// 	visible: true,
+		// 	func: clickReport
+		// },
+		// {
+		// 	name:'Удалить всё',
+		// 	link:'/',
+		// 	disabled: existence,
+		// 	visible: true,
+		// 	func: clickTasksDelete
+		// },
+		// {
+		// 	name:'Удалить завершённые',
+		// 	link:'/',
+		// 	disabled: tasksComleted,
+		// 	visible: true,
+		// 	func: clickDeleteTasksCompleted
+		// },
 
 		// {
 		// 	name:'Темная тема',
@@ -124,11 +122,18 @@
 		//visible:false
 		// },
 		{
+			name:'К списку',
+			link:'/',
+			disabled: false,
+			visible: true,
+			func: clickGotoList
+		},
+		{
 			name:'К спискам',
 			link:'/',
 			disabled: false,
 			visible: true,
-			func: clickGotoLists
+			func: clickGotoHome
 		},
 		
 	])
@@ -201,13 +206,13 @@
 		}
 	}
 
-	function clickGotoLists(){
-		router.push({ name: 'home',} )
+	function clickGotoList(){
+		router.push({ name: 'taskList', params: { id: route.params.id } })
 	}
 
-	function clickReport(){
+	function clickGotoHome(){
 		
-		router.push({ name: 'report', params: { id: route.params.id } })
+		router.push({ name: 'home' })
 	}
 </script>
 
@@ -253,9 +258,9 @@
 
 }
 
-.header.tasks {
+.header.report {
 	/*background-color: rgb(100 149 237);*/
-	background-color: var(--main-task-color);
+	background-color: var(--main-report-color);
 	border-radius: 0 0 .7rem .7rem;
 }
 

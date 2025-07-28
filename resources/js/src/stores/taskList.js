@@ -32,11 +32,18 @@ export const useTaskListStore = defineStore('taskList', () => {
   }
 
   function indexTaskList (id)  { 
-    return taskLists.value.findIndex((element)=>{
+    return taskLists.value.find((element)=>{
       +element.id === +id
       })
   };
-  
+  // определяет имя выполняющего покупку
+  function getNameUserForTask (id)  { 
+    const item = taskListSelect.value.usersList.find((element)=>{
+      return +element.id === +id
+    })
+    return item.name
+  };
+
     //получение списков
     async function getTaskLists() {
       try {
@@ -258,6 +265,7 @@ export const useTaskListStore = defineStore('taskList', () => {
     taskListSignEditing,
     taskListSelectDelete,
     getTaskListsCompleted,
+    getNameUserForTask,
     setTaskListSelectDelete,
     settaskListSignEditing,
     indexTaskList,

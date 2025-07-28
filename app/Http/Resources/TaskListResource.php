@@ -18,7 +18,9 @@ class TaskListResource extends JsonResource
             'id' => $this->id,
             'text' => $this->text,
             'update_at' => date('d.m.Y H:i:s', strtotime('+3 hours', strtotime($this->updated_at))),
-            'tasks' => TaskResource::collection($this->tasks)
+            'tasks' => TaskResource::collection($this->tasks),
+            'usersCount' => $this->usersCount,
+            'usersList' => $this->usersList,
         ];
     }
 }

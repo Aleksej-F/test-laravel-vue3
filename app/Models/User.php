@@ -61,4 +61,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserTg::class);
     }
+
+    public function Task():  \Illuminate\Database\Eloquent\Relations\BelongsTo
+{
+    return $this->belongsTo(Task::class, 'executor_user_id');
+}
 }

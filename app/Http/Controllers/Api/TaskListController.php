@@ -74,13 +74,17 @@ class TaskListController extends Controller
     {
         $user = Auth::user();
         $taskList = $user->taskList()->find($id);
-
+                      
         if (is_null($taskList)){
             return $this->json->error(
                 message: 'Попытка прочитать чужой список!',
                 errors: 403
             ); 
         }
+
+        $taskList['usersCount'] = count($taskList->users()->get());
+        $taskList['usersList'] = $taskList->users()->get();
+
         $tasks = Task::where('list_id', $id)
             ->orderBy('sorting')
             ->get();
@@ -89,6 +93,7 @@ class TaskListController extends Controller
             data: [
                 'taskList' => new TaskListResource($taskList),
                 'tasks' => TaskResource::collection($tasks),
+                
             ],
             message: 'Список задач.',
     );

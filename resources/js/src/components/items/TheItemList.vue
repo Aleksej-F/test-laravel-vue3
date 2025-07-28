@@ -5,32 +5,35 @@
 		<div class="sortIcon">
 			<img src="../../assets/img/icons/bars.svg">
 		</div>
-		<div class="contentWrapper "
+		<div class="contentWrapper"
 			:class="{ 'uncomplite' : !item.complite,  'complite' : item.complite}"
 		>
 			<div class="content">
-			<div class="text">{{ item.text }}</div>
-			<div class="smallWrapper">
-				<div class="small">{{ item.update_at }}</div>
-				<div class="small">
-					<div
-						v-if="tasksLength == 0"
-					>
-						Нет задач
+				<div class="text">{{ item.text }}</div>
+				<div class="smallWrapper">
+					<div class="small">{{ item.update_at }}</div>
+					<div class="small">
+						<div
+							v-if="tasksLength == 0"
+						>
+							Нет задач
+						</div>
+						<div
+							v-else-if="tasksCompleted==tasksLength"
+						>
+							Задачи завершены
+						</div>
+						<div
+							v-else
+						>
+							Завершено: {{ tasksCompleted }} из {{  tasksLength }}
+						</div>
+						<img src="../../assets/img/icons/angle-right.svg">
 					</div>
-					<div
-						v-else-if="tasksCompleted==tasksLength"
-					>
-						Задачи завершены
-					</div>
-					<div
-						v-else
-					>
-						Завершено: {{ tasksCompleted }} из {{  tasksLength }}
-					</div>
-					<img src="../../assets/img/icons/angle-right.svg">
 				</div>
 			</div>
+			<div class="users" v-if="item.usersCount > 1">
+				Участников: {{item.usersCount  }}
 			</div>
 		</div>
 		<div class="selectItem rounded-2">
@@ -348,5 +351,8 @@
 	position: relative;
 	/*width: calc(100% - var(--menu-wrapper) - 1px);*/
 }
-
+.users{
+	color: rgb(125, 123, 123);
+	font-size: 1rem;
+}
 </style>

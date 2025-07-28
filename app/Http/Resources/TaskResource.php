@@ -21,7 +21,9 @@ class TaskResource extends JsonResource
             'complite' => $this->complite ? true: false,
             'list_id' => $this->list_id,
             'sorting' => $this->sorting,
-            
+            'quantity'  => $this->quantity,
+            'price'  => $this->price,
+            'executor_user_id'  => $this->executor_user_id,
         ];
     }
 }

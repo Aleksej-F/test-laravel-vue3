@@ -15,7 +15,10 @@ class Task extends Model
         'smallText',
         'complite',
         'list_id',
-        'sorting'
+        'sorting',
+        'quantity',
+        'price',
+        'executor_user_id'
     ];
 
     protected $hidden = [
@@ -27,5 +30,11 @@ class Task extends Model
     public function tasklist(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(TaskList::class, 'list_id', 'id',);
+    }
+
+    public function executor(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->HasOne(User::class);
+       
     }
 }

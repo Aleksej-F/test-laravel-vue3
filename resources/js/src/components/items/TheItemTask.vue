@@ -1,6 +1,6 @@
 <template>
    <div class="listItem" 
-		@click.stop="clickItemTaskList"
+		@click.stop="clickItemTaskList(item)"
 	>
         <div class="sortIcon">
             <img src="../../assets/img/icons/bars.svg" />
@@ -8,7 +8,7 @@
         <label>
             <input class="form-check-input" type="checkbox" 
                 v-model="item.complite"
-                @click="clickCheckTask()"
+                @click.stop="clickCheckTask()"
             />
         </label>
         <div class="contentWrapper" 
@@ -16,6 +16,23 @@
         >
             <div class="content">
 					<div class="text">{{ item.text }}</div>
+                    <div class="description">
+                        <div class="description__item">кол-во: {{ item.quantity }} </div>
+                        <div class="description__item">цена: {{ item.price }}</div>
+                        <div class="description__item">сумма: {{ item.quantity * item.price }}</div>
+
+                    </div>
+                    <div class="executor"
+                        v-if="item.executor_user_id == 0"
+                    >
+                          
+                    </div>
+                    <div class="executor"
+                        v-else
+                    >
+                        покупает: {{ taskLists.getNameUserForTask(item.executor_user_id) }}
+                    </div>
+
 					<div class="smallWrapper">
 						<div class="small">{{ smallText }}</div>
 					</div>
@@ -99,6 +116,7 @@ async function clickCheckTask(){
 
 function clickItemTaskList(params) {
    message.setMenuVisible();
+   editTask(params)
 }
 
 async function editTask(item) {
@@ -112,6 +130,10 @@ async function editTask(item) {
         await tasks.updateTaskDatabase({mes:true })
         await taskLists.getTaskList({id:route.params.id});
     }
+}
+
+async function viewingTask(params) {
+
 }
 
 async function deleteTask(id) {
@@ -282,5 +304,19 @@ async function deleteTask(id) {
     /* border: 1px #dee2e6 solid; */
     /* border-radius: 0.375rem; */
     border-radius: 0.7rem;
+}
+
+.description{
+    display: flex;
+    &__item{
+        color: var(--btn-active-color);
+        margin-left: 10px; 
+        min-width: 100px;
+        flex-wrap: wrap;
+    }
+}
+.executor{
+     margin-left: 10px; 
+    color: var(--btn-active-color);
 }
 </style>

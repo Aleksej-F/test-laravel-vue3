@@ -9,7 +9,8 @@
 	/*#6e6e6e;*/
 	--main-task-color: rgb(100 149 237);
 	/*#8d8d8d;*/
-
+	--main-report-color: rgb(109, 100, 237);
+	
 	--menu-item-color: rgb(51 51 51);
 	--list-item-color: #edecec;
 
@@ -362,6 +363,7 @@ textarea {
 	width: 100%;
 	gap: 1rem;
 	color: #212529;
+	justify-content: space-between; 
 	/*transition: all .5s;*/
 }
 

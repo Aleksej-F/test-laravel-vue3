@@ -48,13 +48,24 @@ class ReportController extends Controller
                       
         if (is_null($taskList)){
             return $this->json->error(
-                message: 'Попытка прочитать чужой список!',
+                message: 'Вы пытаетесь прочитать чужой список!',
                 errors: 403
             ); 
         }
-
-        $taskList['usersCount'] = count($taskList->users()->get());
-        $taskList['usersList'] = $taskList->users()->get();
+               
+        $usersList = $taskList->users()->get();
+        $usersCount = count($usersList);
+        foreach ($usersList  as $i => $value) {
+            $usersList[$i]['tasks'] = 
+             TaskResource::collection(
+                $value->task()
+                ->where('list_id', $id)
+                ->orderBy('sorting')
+                ->get()
+             );
+            // $taskList[$i]['users'] =  $value->users()->get();
+            
+        }
 
         $tasks = Task::where('list_id', $id)
             ->orderBy('sorting')
@@ -62,8 +73,8 @@ class ReportController extends Controller
        
         return $this->json->response(
             data: [
-                'taskList' => new TaskListResource($taskList),
-                'tasks' => TaskResource::collection($tasks),
+                'usersList' => $usersList,
+                // 'tasks' => TaskResource::collection($tasks),
                 
             ],
             message: 'Отчет.',

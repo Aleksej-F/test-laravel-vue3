@@ -32,9 +32,9 @@ class Task extends Model
         return $this->belongsTo(TaskList::class, 'list_id', 'id',);
     }
 
-    public function executor(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function executor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->HasOne(User::class);
+        return $this->belongsTo(User::class, 'executor_user_id', 'id');
        
     }
 }

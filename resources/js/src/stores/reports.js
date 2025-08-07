@@ -9,20 +9,41 @@ export const useReportsStore = defineStore('reports', () => {
   const user = useUsersStore()
   
   const report = ref([])
-  
+  const showDetails = ref(false)
+
+
   const viewCreateTaskVisible = ref(false)
   const taskSelect = ref({text: ""})
   const taskSignEditing  = ref(false)
   const tasksSelectDelete = ref([])
 
-  const tasksLength = computed(() => tasks.value.length);
+  const reportlength = computed(() => report.value.length);
   
-  const tasksNoCompleted = computed(() => {
-		return tasks.value.filter((word) => !word.complite)
+  
+  const averageExpense = computed(() => {
+    let sum = 0
+		report.value.forEach((user) => {
+      user.tasks.forEach((element) => {
+        sum += element.quantity * element.price
+      })
+    })
+    
+    return sum/report.value.length
+	})
+  
+  const totalExpenditure = computed(() => {
+		let sum = 0
+		report.value.forEach((user) => {
+      user.tasks.forEach((element) => {
+        sum += element.quantity * element.price
+      })
+    })
+    
+    return sum
 	})
 
-  const tasksCompleted = computed(() => {
-		return tasks.value.filter((word) => word.complite)
+  const showDetailsText = computed(() => {
+		return showDetails.value ? 'Скрыть':'Показать'
 	})
   
   
@@ -43,7 +64,8 @@ export const useReportsStore = defineStore('reports', () => {
         }
           await axios(config)
             .then(({data})=>{
-              report.value = [data.data.facility]
+              console.log(data.data.usersList)
+              report.value = data.data.usersList
               
             })
           return true
@@ -55,22 +77,25 @@ export const useReportsStore = defineStore('reports', () => {
 
   
     
-     //запись редактируемой задачи
-    async function setTaskCreate(item) {
-      taskSelect.value =  item
-      taskSignEditing.value = true
-    }
-     //изменение видимости диалогового окна
-    function toggleViewCreateTaskVisible(){
-      viewCreateTaskVisible.value = !viewCreateTaskVisible.value
+    
+    //показать скрыть подробности элементов отчета
+    function toggleShowDetails(){
+      showDetails.value = !showDetails.value
     }
 
+    
 
   return { 
     report,
+    showDetails,
+
+    reportlength,
+    averageExpense,
+    totalExpenditure,
+    showDetailsText,
 
     getReport,
-    
+    toggleShowDetails,
 
   }
 })

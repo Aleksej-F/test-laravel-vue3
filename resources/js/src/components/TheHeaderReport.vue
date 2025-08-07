@@ -32,15 +32,38 @@
 						>
 							<p v-if="item.visible">{{ item.name  }}</p>
 						</li>
+						<li class="menu rounded-2"
+								
+							@click.stop="reports.toggleShowDetails()"
+						>
+							<p >{{reports.showDetailsText }}</p>
+						</li>
 					</ul>
 				</div>
 			</div>
-			<div class="headerLine title">
-				<h6 id="tasksTitle">{{ taskLists.taskListSelect.text }}</h6>
+			<div class="content">
+				<div class="content__item">
+					<div class="headerLine title">
+						<h6 id="tasksTitle">{{ taskLists.taskListSelect.text }}</h6>
+					</div>
+					<div class="headerLine time">
+						<h6 id="tasksTime">{{ taskLists.taskListSelect.update_at }}</h6>				
+					</div>	
+				</div>
+				<div class="content__item">
+					<div class="headerLine">
+						Средняя трата: 
+						{{ reports.averageExpense }}
+					</div>
+					<div class="headerLine">
+						Всего потрачено:
+						{{ reports.totalExpenditure }}
+					</div>
+				</div>
 			</div>
-			<div class="headerLine time">
-				<h6 id="tasksTime">{{ taskLists.taskListSelect.update_at }}</h6>				
-			</div>	
+			<div>
+
+			</div>
 		</div>
 	</div >
   
@@ -63,7 +86,8 @@
 	import { useUsersStore } from '../stores/Users.js'
 	import { useMessageStore } from '../stores/message.js'
 	import { useDialogStore } from "../stores/dialog.js";
-		
+	import { useReportsStore } from "../stores/reports.js";
+
 	const router = useRouter()
 	const route = useRoute()
 	
@@ -72,6 +96,7 @@
 	const tasks = useTasksStore()
 	const user = useUsersStore()
 	const dialog = useDialogStore()
+	const reports = useReportsStore();
 
 	const showActive = ref(false)
 
@@ -80,47 +105,7 @@
 	const userAutch = computed(() => user.token !== null)
 		
 	const listMenu = ref ([
-		// {
-		// 	name:'Добавить задачу',
-		// 	link:'/',
-		// 	disabled: false,
-		// 	visible: true,
-		// 	func: clickAddTask
-		// },
-		// {
-		// 	name:'Отчет',
-		// 	link:'/',
-		// 	disabled: false,
-		// 	visible: true,
-		// 	func: clickReport
-		// },
-		// {
-		// 	name:'Удалить всё',
-		// 	link:'/',
-		// 	disabled: existence,
-		// 	visible: true,
-		// 	func: clickTasksDelete
-		// },
-		// {
-		// 	name:'Удалить завершённые',
-		// 	link:'/',
-		// 	disabled: tasksComleted,
-		// 	visible: true,
-		// 	func: clickDeleteTasksCompleted
-		// },
-
-		// {
-		// 	name:'Темная тема',
-		// 	link:'/acoustics',
-		// 	disabled: false,
-		//visible:false
-		// },
-		// {
-		// 	name:'Светлая тема',
-		// 	link:'/acoustics',
-		// 	disabled: false,
-		//visible:false
-		// },
+		
 		{
 			name:'К списку',
 			link:'/',
@@ -128,14 +113,14 @@
 			visible: true,
 			func: clickGotoList
 		},
+		
 		{
-			name:'К спискам',
+			name: 'К спискам',
 			link:'/',
 			disabled: false,
 			visible: true,
 			func: clickGotoHome
 		},
-		
 	])
 
 	watch(()=> message.menuVisible, (menuVisible) => {
@@ -145,17 +130,11 @@
 		}
 	})
 	
-	async function clickAddTask (){
-		tasks.setNewTaskCreate(route.params.id)
-		dialog.setLayout('TheItemTaskNewVsDialog')
-   	dialog.toggleViewDialogVisible()
-		const result = await dialog.setDialogeDelete(false)
-    	if (result) {
-			tasks.tasksSelectDelete = []
-			await tasks.setTaskDatabase()
-			await taskLists.getTaskList({id:route.params.id});
-		}
-	}
+	const showDetailsText = computed(() => {
+		return showDetails.valueOf ? 'Показать':'Скрыть'
+	})
+  
+
 
 	function clickElementMenu(link){
 		if (window.innerWidth > 480){
@@ -177,42 +156,26 @@
 		}, 100)
 	}
 
-	async function clickDeleteTasksCompleted() {
-		dialog.setLayout('TheItemTaskDeleteComletVsDialog')
-		dialog.toggleViewDialogVisible()
-		message.setMenuVisible();
-		const result = await dialog.setDialogeDelete(true)
-		if (result) {
-			tasks.setTasksSelectDelete(tasks.tasksCompleted.map((num) => num.id))
-			await tasks.deleteTaskDatabase(tasks.tasksCompleted[0].id)
-			await taskLists.getTaskList({id:tasks.tasksCompleted[0].list_id})
-		}
-	}
+
 
 	function clickImemMenu(itemFunc){
 		clickMenuNoVisible()
 		itemFunc()
 	}
 
-	async function clickTasksDelete(params) {
-		dialog.setLayout('TheItemTaskDeleteAllVsDialog')
-		dialog.toggleViewDialogVisible()
-		message.setMenuVisible();
-		const result = await dialog.setDialogeDelete(true)
-		if (result) {
-			tasks.setTasksSelectDelete(tasks.tasks.map((num) => num.id))
-			await tasks.deleteTaskDatabase(tasks.tasks[0].id)
-			await taskLists.getTaskList({id:tasks.tasks[0].list_id})
-		}
-	}
+	
 
 	function clickGotoList(){
 		router.push({ name: 'taskList', params: { id: route.params.id } })
 	}
 
 	function clickGotoHome(){
-		
 		router.push({ name: 'home' })
+	}
+
+	function clickVisibleList(){
+		reports.toggleShowDetails()
+
 	}
 </script>
 
@@ -451,5 +414,18 @@ p{
     /* border: 1px #dee2e6 solid; */
     /* border-radius: 0.375rem; */
     border-radius: .7rem;
+}
+.content{
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	&__item{
+		flex: 1;
+		width: 50%;
+		&:nth-child(2){
+			display: flex;
+			justify-content: space-between;
+		}
+	}
 }
 </style>

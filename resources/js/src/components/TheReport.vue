@@ -6,13 +6,14 @@
                 <div class="sortMenuOut"></div>
                 <div id="tasksListOut" class="light">
                     <div class="list-group" 
-                      v-if="tasks.tasksLength > 0"
+                      v-if="reports.reportlength > 0"
                       >
-                        <TheItemTask
-                            v-for="(item, index) in tasks.tasksNoCompleted"
+                        <TheItemReport
+                            v-for="(item, index) in reports.report"
                             :key="+item.id"
-                            :item="item"
+                            :itemReports="item"
                             :menuVisible="menuVisible"
+                            :displayDetails="reports.showDetails"
                         />
                     </div>
                     <div class="list-group" v-else>
@@ -22,7 +23,7 @@
                     </div>
                 
 
-                  <div class="compliteTaskPanelHeader"
+                  <!-- <div class="compliteTaskPanelHeader"
                     v-if="tasks.tasksCompleted.length > 0"
                     @click.stop="toogleTaskComplitedVisible"
                   >
@@ -44,7 +45,7 @@
                       :item="item"
                       :menuVisible="menuVisible"
                     />
-                  </div>
+                  </div> -->
                 </div>
                 <div
                     class="addTaskButton active"
@@ -72,6 +73,7 @@
   import { useReportsStore } from "../stores/reports.js";
 
   import TheItemTask from "./items/TheItemTask.vue";
+  import TheItemReport from "./items/TheItemReport.vue"
 
   const route = useRoute()
 
@@ -94,7 +96,7 @@
   const taskListId = ref(route.params.id);
   
   onMounted(async () => {
-      
+      console.log(reports.report)
       if (user.autchUser) {
 
         await reports.getReport({id:route.params.id});

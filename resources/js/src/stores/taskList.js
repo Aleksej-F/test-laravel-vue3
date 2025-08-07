@@ -38,6 +38,7 @@ export const useTaskListStore = defineStore('taskList', () => {
   };
   // определяет имя выполняющего покупку
   function getNameUserForTask (id)  { 
+    // console.log(taskListSelect.value.usersList)
     const item = taskListSelect.value.usersList.find((element)=>{
       return +element.id === +id
     })

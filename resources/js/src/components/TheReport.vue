@@ -47,16 +47,7 @@
                     />
                   </div> -->
                 </div>
-                <div
-                    class="addTaskButton active"
-                    title="Добавить"
-                    @click.stop="clickAddTask()"
-                >
-                    <span class="plusWrapper">
-                        <span class="plusVert"></span>
-                        <span class="plusHoriz"></span>
-                    </span>
-                </div>
+               
             </div>
         </div>
     </div>
@@ -98,7 +89,7 @@
   onMounted(async () => {
       console.log(reports.report)
       if (user.autchUser) {
-
+        await taskLists.getTaskList({id:route.params.id});
         await reports.getReport({id:route.params.id});
         
       }

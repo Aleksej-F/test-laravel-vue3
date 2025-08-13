@@ -101,7 +101,8 @@ watch(
         if (menuVisible) {
             showVisible.value = false;
         }
-    }
+    },
+    
 );
 
 const smallText = computed(() => {

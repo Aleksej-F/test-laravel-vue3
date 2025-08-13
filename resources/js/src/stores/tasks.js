@@ -34,6 +34,17 @@ export const useTasksStore = defineStore('tasks', () => {
 		return taskSelect.value.text.length
 	})
 
+  const getTaskSelectInfalidQuantity = computed(() => {
+    const regex = /^\d+$/
+    return !regex.test(taskSelect.value.quantity)
+  })
+
+  const getTaskSelectInfalidPrice = computed(() => {
+    const regex = /^\d+$/
+    return !regex.test(taskSelect.value.price)
+    
+  })
+
   const getTaskSelectSmallTextLength = computed(() => {
     // console.log(taskLists.taskListSelect.text)
     return taskSelect.value.smallText ? taskSelect.value.smallText.length : 0
@@ -52,31 +63,7 @@ export const useTasksStore = defineStore('tasks', () => {
     //   })
   };
   
-    //получение списков
-    async function getTaskLists() {
-      // const data = JSON.stringify(user)
-     
-      try {
-        const config = {
-          method: 'get',
-          // maxBodyLength: Infinity,
-          url:'/api/tasklist',
-          headers: { 
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-          await axios(config)
-            .then(({data})=>{
-              tasks.value = data.data.taskLists
-            })
-          return true
-      } catch (e) {
-          message.setMessageError( e.data )
-        return false
-      }
-    }
+    
     //получение данных задачи
     async function getTask({id}) {
       // const data = JSON.stringify(user)
@@ -103,7 +90,7 @@ export const useTasksStore = defineStore('tasks', () => {
       }
     }
 
-     //сохранение новой задачи в базу
+    //сохранение новой задачи в базу
     async function setTaskDatabase() {
       try {
         const config = {
@@ -129,8 +116,10 @@ export const useTasksStore = defineStore('tasks', () => {
       }
     }
 
-     //обновление задачи в базе
-     async function updateTaskDatabase({mes }) {
+    //обновление задачи в базе
+    async function updateTaskDatabase({mes }) {
+      taskSelect.value.price = +taskSelect.value.price
+      taskSelect.value.quantity = +taskSelect.value.quantity
       try {
         const config = {
           method: 'put',
@@ -153,7 +142,7 @@ export const useTasksStore = defineStore('tasks', () => {
             })
           return true
       } catch (e) {
-         message.setMessageError( e )
+          message.setMessageError( e )
         return false
       }
     }
@@ -181,12 +170,12 @@ export const useTasksStore = defineStore('tasks', () => {
             })
           return true
       } catch (e) {
-         message.setMessageError( e )
+          message.setMessageError( e )
         return false
       }
     }
 
-     //запись нулевой задачи
+    //запись нулевой задачи
     async function setNewTaskCreate(id) {
       taskSelect.value = {
         text: "",
@@ -196,12 +185,13 @@ export const useTasksStore = defineStore('tasks', () => {
       taskSignEditing.value = false
     }
     
-     //запись редактируемой задачи
+    //запись редактируемой задачи
     async function setTaskCreate(item) {
       taskSelect.value =  item
       taskSignEditing.value = true
     }
-     //изменение видимости диалогового окна
+
+    //изменение видимости диалогового окна
     function toggleViewCreateTaskVisible(){
       viewCreateTaskVisible.value = !viewCreateTaskVisible.value
     }
@@ -227,7 +217,9 @@ export const useTasksStore = defineStore('tasks', () => {
     getTaskSelectSmallTextLength,
     tasksNoCompleted,
     tasksCompleted,
-
+    getTaskSelectInfalidPrice,
+    getTaskSelectInfalidQuantity,
+    
     setTaskDatabase,
     updateTaskDatabase,
     deleteTaskDatabase,

@@ -36,38 +36,42 @@ export const useTaskListStore = defineStore('taskList', () => {
       +element.id === +id
       })
   };
+
   // определяет имя выполняющего покупку
   function getNameUserForTask (id)  { 
-    // console.log(taskListSelect.value.usersList)
+    if (!taskListSelect.value.usersList) {
+      return
+    }
     const item = taskListSelect.value.usersList.find((element)=>{
       return +element.id === +id
     })
-    return item.name
+    return item ? item.name : ''
   };
 
-    //получение списков
-    async function getTaskLists() {
-      try {
-        const config = {
-          method: 'get',
-          // maxBodyLength: Infinity,
-          url:'/api/tasklist',
-          headers: { 
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-          await axios(config)
-            .then(({data})=>{
-              taskLists.value = data.data.taskLists
-            })
-          return true
-      } catch (e) {
-         message.setMessageError( e )
-        return false
+  //получение списков
+  async function getTaskLists() {
+    try {
+      const config = {
+        method: 'get',
+        // maxBodyLength: Infinity,
+        url:'/api/tasklist',
+        headers: { 
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`,
+        },
       }
+        await axios(config)
+          .then(({data})=>{
+            taskLists.value = data.data.taskLists
+          })
+        return true
+    } catch (e) {
+      message.setMessageError(e)
+      return false
     }
+  }
+
     //получение данных списка
     async function getTaskList({id}) {
       // const data = JSON.stringify(user)
@@ -95,7 +99,7 @@ export const useTaskListStore = defineStore('taskList', () => {
     }
 
      //получение данных списка по приглашению
-     async function getTaskListShare({id}) {
+    async function getTaskListShare({id}) {
       // const data = JSON.stringify(user)
       try {
         const config = {
@@ -115,7 +119,6 @@ export const useTaskListStore = defineStore('taskList', () => {
             })
           return true
       } catch (e) {
-        
         message.setMessageError( e )
         return false
       }
@@ -123,7 +126,6 @@ export const useTaskListStore = defineStore('taskList', () => {
 
      //сохранение нового списка в базу
     async function setTaskListDatabase() {
-      
       try {
         const config = {
           method: 'post',
@@ -148,8 +150,8 @@ export const useTaskListStore = defineStore('taskList', () => {
       }
     }
 
-     //обновление списка в базе
-     async function updateTaskListDatabase() {
+    //обновление списка в базе
+    async function updateTaskListDatabase() {
       try {
         const config = {
           method: 'put',
@@ -177,7 +179,6 @@ export const useTaskListStore = defineStore('taskList', () => {
 
     //удаление списка из базы
     async function deleteTaskListDatabase(id) {
-     
       try {
         const config = {
           method: 'delete',
@@ -198,13 +199,13 @@ export const useTaskListStore = defineStore('taskList', () => {
           })
         return true
       } catch (e) {
-         message.setMessageError( e )
+          message.setMessageError( e )
         return false
       }
     }
+
     // tasklist/append/{id}
     async function appendTaskListDatabase({id}) {
-     
       try {
         const config = {
           method: 'post',
@@ -225,24 +226,26 @@ export const useTaskListStore = defineStore('taskList', () => {
           })
         return true
       } catch (e) {
-         message.setMessageError( e )
+          message.setMessageError( e )
         return false
       }
     }
-     //запись нулевого списка
+
+    //запись нулевого списка
     async function setNewTaskListCreate() {
       // projectsList.value = [newTaskListCreate.value]
       taskListSelect.value = {... newTaskListCreate.value}
       taskListSignEditing.value = false
     }
     
-     //запись редактируемого списка
-     async function setTaskListCreate(item) {
+    //запись редактируемого списка
+    async function setTaskListCreate(item) {
       // projectsList.value = [newTaskListCreate.value]
       taskListSelect.value = {... item}
       taskListSignEditing.value = true
     }
-     //изменение видимости диалогового окна
+
+    //изменение видимости диалогового окна
     function toggleViewCreateTaskListVisible(){
       if (viewCreateTaskListVisible.value) {
         setNewTaskListCreate() // обнуление при закрытии
@@ -253,6 +256,7 @@ export const useTaskListStore = defineStore('taskList', () => {
     function settaskListSignEditing(attribute){
       taskListSignEditing.value = attribute
     }
+
     function clearTaskLists() {
       taskLists.value = []
     }

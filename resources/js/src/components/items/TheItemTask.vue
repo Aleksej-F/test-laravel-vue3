@@ -17,8 +17,8 @@
             <div class="content">
 					<div class="text">{{ item.text }}</div>
                     <div class="description">
-                        <div class="description__item">кол-во: {{ item.quantity }} </div>
                         <div class="description__item">цена: {{ item.price }}</div>
+                        <div class="description__item">кол-во: {{ item.quantity }} </div>
                         <div class="description__item">сумма: {{ item.quantity * item.price }}</div>
 
                     </div>

@@ -17,7 +17,7 @@
 					@click.stop="yesClickDialog()"
 				>Да</div>
 				<div class="ok-button button-d" 
-					:class="{'disabled': tasks.getTaskSelectTextLength == 0 || !user.autchUser}"
+					:class="{'disabled': tasks.getTaskSelectTextLength == 0 || tasks.getTaskSelectInfalidQuantity || tasks.getTaskSelectInfalidPrice ||!user.autchUser}"
 					@click.stop="okClickDialog()"
 					v-else
 				>Ok</div>

@@ -19,17 +19,33 @@
 </template>
 
 <script setup>
-   import { ref, computed, watch, onMounted } from "vue";
+    import { ref, computed, watch, onMounted } from "vue";
 
-   const props = defineProps(['id'])
+    const props = defineProps(['id'])
+    
+    const url = encodeURIComponent(
+        location.protocol + "//" + 
+        location.host + location.pathname + "tasklist/share/" + props.id + "/webapp"
+        
+        // 'https://tasklist.ecostroi-spb.ru/'+"tasklist/share/" + props.id + "/webapp"
+    );
+    
+    const title = encodeURIComponent(document.title);
+
+    const twitterUserName = "itchief_ru";
    
-   const url = encodeURIComponent(
-      location.protocol + "//" + location.host + location.pathname + "tasklist/share/" + props.id
-   );
-   const title = encodeURIComponent(document.title);
-   const twitterUserName = "itchief_ru";
-
-        const shareData = [
+    const miniAppParams = {
+        bot_id: import.meta.env.VITE_APP_BOT_ID,    // ID бота, владеющего мини-аппом
+        app_id: import.meta.env.VITE_APP_BOT_USERNAME,    // ID мини-аппа
+        params: {
+            start_param: 'приветствие'  // Дополнительные параметры
+        }
+    };
+    // Формируем URL для открытия мини-аппа
+    // const miniAppUrl = `tg://resolve?domain=${import.meta.env.VITE_APP_BOT_USERNAME}&startapp=1`;
+    const miniAppUrl = `https://t.me/${import.meta.env.VITE_APP_BOT_USERNAME}?start=share_${props.id}`
+            
+    const shareData = [
             {
                 name: "twitter",
                 title: "Twitter",
@@ -67,10 +83,14 @@
             {
                 name: "telegram",
                 title: "Telegram",
-                href: "https://t.me/" + import.meta.env.VITE_APP_BOT_USERNAME + "?start=" + "share_" + props.id,
-                // "https://t.me/share/url?url=" + url + "&title=" + title,
+                
+                // href: "https://t.me/share/url?url=" + url, //+ "?start=" + "share_" + props.id+ "&title=" + title+ "&text=Попробуй%20мой%20мини-апп!",
+                // href: "https://t.me/" + import.meta.env.VITE_APP_BOT_USERNAME + "?start=" + "share_" + props.id,
+                // href:"https://t.me/share/url?url=" + miniAppUrl + "&title=" + title,
+                
+                href:`https://t.me/share/url?url=${encodeURIComponent(miniAppUrl)}&text=Приглашаю%20присоединиться%20к%20списку%20покупок`,
                 onclick:()=>{
-                    window.open(this.href, 'Telegram', 'width=800,height=300,toolbar=0,status=0'); return false},
+                    window.open(this.href, 'Telegram','_blank', 'width=800,height=300,toolbar=0,status=0')},
             },
         ];
 

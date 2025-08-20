@@ -203,8 +203,8 @@ class Handler extends WebhookHandler
             }
             $contentId = $parts[1];
             // $this->reply($contentId);
-            $this->chat->message("Поделитесь списком с друзьями. " . "\n\nПросто перешлите это сообщение в нужный чат! 😊".
-            "\n\nВыберите один из способов для просмотра.")
+            $this->chat->message("Вас приглашают присоединиться к списку покупок. " .
+            "\n\nВыберите один из способов для просмотра. 😊")
             ->keyboard(
                 Keyboard::make()->buttons([
                     Button::make('Перейти на сайт')->url('https://tasklist.ecostroi-spb.ru/tasklist/share/'.$contentId),
@@ -215,6 +215,8 @@ class Handler extends WebhookHandler
         }
 
     }
+
+    
 
     protected function handleUnknownCommand(Stringable $text): void
     {
@@ -229,6 +231,9 @@ class Handler extends WebhookHandler
     {
         Log::info(json_encode($this->message->toArray(), flags: JSON_UNESCAPED_UNICODE));
         // $this->reply(json_encode($this->message->toArray(), flags: JSON_UNESCAPED_UNICODE));
+        $messsss = $this->message->toArray();
+        $chat_test = $messsss['chat']['id'];
         // $this->reply($text);
+       
     }
 }

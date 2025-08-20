@@ -212,7 +212,7 @@ export const useTasksStore = defineStore('tasks', () => {
     setTaskSignEditing,
     
     indexTaskList,
-    getTaskLists,
+    
     getTaskSelectTextLength,
     getTaskSelectSmallTextLength,
     tasksNoCompleted,

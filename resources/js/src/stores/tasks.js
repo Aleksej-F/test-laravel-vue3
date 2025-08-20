@@ -180,7 +180,11 @@ export const useTasksStore = defineStore('tasks', () => {
       taskSelect.value = {
         text: "",
         smallText: "",
-        list_id: id
+        list_id: id,
+        executor_user_id: 0 ,
+        price: 0,
+        quantity: 0
+
       }
       taskSignEditing.value = false
     }

@@ -308,6 +308,10 @@ async function deleteTask(id) {
 
 .description{
     display: flex;
+    @media  (max-width: 768px) { 
+      flex-direction:column;  
+	  font-size: 0.8rem;
+	}
     &__item{
         color: var(--btn-active-color);
         margin-left: 10px; 
@@ -316,7 +320,11 @@ async function deleteTask(id) {
     }
 }
 .executor{
-     margin-left: 10px; 
+    margin-left: 10px; 
     color: var(--btn-active-color);
+    @media  (max-width: 768px) { 
+      flex-direction:column;  
+	  font-size: 0.8rem;
+	}
 }
 </style>

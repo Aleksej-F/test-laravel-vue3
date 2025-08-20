@@ -419,12 +419,21 @@ p{
 	display: flex;
 	justify-content: space-between;
 	width: 100%;
+	
 	&__item{
 		flex: 1;
 		width: 50%;
+		
 		&:nth-child(2){
 			display: flex;
 			justify-content: space-between;
+			@media  (max-width: 768px) { 
+			flex-direction:column;  
+			font-size: 0.7rem;
+			justify-content: center;
+			align-items: center;
+			gap: 5px;
+		}
 		}
 	}
 }

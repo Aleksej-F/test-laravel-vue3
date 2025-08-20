@@ -8,7 +8,7 @@
         >
             <div class="report__header">
                 <div class="report__header-item">{{ itemReports.name }} </div>
-                <div class="report__header-item">средняя: {{ reports.averageExpense }} </div>
+                <div class="report__header-item">средняя трата: {{ reports.averageExpense }} </div>
                 
                 <div class="report__header-item"
                    v-if="getSumTasks(itemReports.tasks)-reports.averageExpense < 0" 
@@ -20,13 +20,14 @@
             </div>
             <div
                 v-if="props.displayDetails"
-            >
+            > 
+                Купил:
                 <div class="report__content"
                     :class="{uncomplite:!item.complite, complite:item.complite}"
                     v-for="(item, index) in itemReports.tasks"
                     :key="+item.id"
                 >
-                    
+                   
                     <div class="description">
                         <div class="description__item"> {{ item.text}} </div> 
                         <div class="description__item">кол-во: {{ item.quantity }} </div>
@@ -330,13 +331,23 @@ async function deleteTask(id) {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
+    @media  (max-width: 768px) { 
+      flex-direction:column;  
+	  font-size: 1rem;
+	}
     &__item{
         color: var(--btn-active-color);
         margin-left: 10px; 
+        padding-left: 10px;
         min-width: 120px;
         flex: 1;
         &:first-child{
-             flex: 2;
+            flex: 2;
+            @media  (max-width: 768px) { 
+                font-size: 1rem;
+                font-weight: bold;
+                 padding-left: 0px;
+            }
         }
     }
 }
@@ -347,10 +358,21 @@ async function deleteTask(id) {
    &__header{
     display: flex;
     justify-content: space-between;
+    @media  (max-width: 768px) { 
+      flex-direction:column;  
+	  font-size: 0.9rem;
+      
+	}
     &-item{
         flex: 1;
+        padding-left: 10px;
         &:first-child{
-             flex: 2;
+            flex: 2;
+            @media  (max-width: 768px) { 
+                font-size: 1rem;
+                font-weight: bold;
+                padding-left: 0px;
+            }
         }
     }
 }

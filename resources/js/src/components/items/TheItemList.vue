@@ -11,7 +11,12 @@
 			<div class="content">
 				<div class="text">{{ item.text }}</div>
 				<div class="smallWrapper">
-					<div class="small">{{ item.update_at }}</div>
+					<div class="smallRow">
+						<div class="small">{{ item.update_at }}</div>
+						<div class="users" v-if="item.usersCount > 1">
+							Участников: {{item.usersCount  }}
+						</div>
+					</div>
 					<div class="small">
 						<div
 							v-if="tasksLength == 0"
@@ -32,9 +37,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="users" v-if="item.usersCount > 1">
-				Участников: {{item.usersCount  }}
-			</div>
+			
 		</div>
 		<div class="selectItem rounded-2">
 			<img src="../../assets/img/icons/check.svg">
@@ -48,6 +51,10 @@
 			<div class="dropdownMenu rounded-2"
 				:class="{'show': showVisible}"
 			>
+				<SocialNetworkView 
+					:id="item.id"
+					v-if="socialViewVisible && socialViewPosition > 441"
+				/>
 				<ul class="rounded-2">
 					<li class="menu rounded-2"
 						@click.stop="editTaskList(item)"
@@ -57,12 +64,17 @@
 					>Удалить</li>
 					<li class="menu rounded-2"
 						title="Поделиться ссылкой на список в соцсетях"
-						@click.stop="clickShareLink()"
+						@click.stop="(e)=>clickShareLink(e)"
 					>Поделиться</li>
+					<li class="menu rounded-2" v-if="item.usersCount > 1"
+						@click.stop="clickReport(item.id)"
+					>
+						Отчет
+					</li>
 				</ul>
 				<SocialNetworkView 
 					:id="item.id"
-					v-if="socialViewVisible"
+					v-if="socialViewVisible && socialViewPosition < 441"
 				/>
 			</div>
 			
@@ -91,7 +103,7 @@
 	const router = useRouter()
 
 	const props = defineProps(['item', 'index', 'menuVisible'])
-
+	const socialViewPosition = ref(0)
 	
 	watch(()=> message.menuVisible, (menuVisible) => {
 		// console.log(' item props.menuVisible - ', menuVisible)
@@ -155,10 +167,14 @@
 	// 		console.log('Something went wrong', err);
 	// 	});
 	}
-
-	async function clickShareLink() {
-		socialViewVisible.value = !socialViewVisible.value
+	function clickReport(id){
 		
+		router.push({ name: 'report', params: { id } })
+	}
+	async function clickShareLink(e) {
+		console.log(e.clientY)
+		socialViewVisible.value = !socialViewVisible.value
+		socialViewPosition.value = e.clientY 
 		
 	}
 </script>
@@ -271,8 +287,9 @@
 .dropdownMenu {
 	position: absolute;
 	top: 2rem;
+	
 	right: .6rem;
-	z-index: 100;
+	z-index: 1000;
 	opacity: 0;
 	visibility: hidden;
 	background-color: #fff;
@@ -354,5 +371,10 @@
 .users{
 	color: rgb(125, 123, 123);
 	font-size: 1rem;
+}
+.smallRow{
+	display: flex;
+	width: 18rem;
+	justify-content:space-between;
 }
 </style>

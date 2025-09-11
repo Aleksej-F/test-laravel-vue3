@@ -71,7 +71,7 @@
 	max-width: 1100px;
 		
 	@media  (max-width: 768px) { 
-	  max-width: 90vw;
+	  max-width: 95vw;
 	}
 
  }
@@ -779,8 +779,8 @@ textarea::placeholder {
 	resize: none;
 	padding: 0;
 	margin: 0 0 .6rem;
-	background-color: #ebebeb;
-	background: none;
+	background-color: #e4e5ed;
+	
 
 	/* font-family: 'Arial'; */
 	font-size: 1rem;

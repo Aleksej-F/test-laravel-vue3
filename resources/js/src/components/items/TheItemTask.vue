@@ -1,67 +1,70 @@
 <template>
-   <div class="listItem" 
-		@click.stop="clickItemTaskList(item)"
-	>
-        <div class="sortIcon">
-            <img src="../../assets/img/icons/bars.svg" />
-        </div>
-        <label>
-            <input class="form-check-input" type="checkbox" 
-                v-model="item.complite"
-                @click.stop="clickCheckTask()"
-            />
-        </label>
-        <div class="contentWrapper" 
-            :class="{uncomplite:!item.complite, complite:item.complite}"
+   
+        <div class="listItem" 
+            @click.stop="clickItemTaskList(item)"
         >
-            <div class="content">
-					<div class="text">{{ item.text }}</div>
-                    <div class="description">
-                        <div class="description__item">цена: {{ item.price }}</div>
-                        <div class="description__item">кол-во: {{ item.quantity }} </div>
-                        <div class="description__item">сумма: {{ item.quantity * item.price }}</div>
-
-                    </div>
-                    <div class="executor"
-                        v-if="item.executor_user_id == 0"
-                    >
-                          
-                    </div>
-                    <div class="executor"
-                        v-else
-                    >
-                        покупает: {{ taskLists.getNameUserForTask(item.executor_user_id) }}
-                    </div>
-
-					<div class="smallWrapper">
-						<div class="small">{{ smallText }}</div>
-					</div>
+            <div class="sortIcon">
+                <img src="../../assets/img/icons/bars.svg" />
             </div>
-        </div>
-        <div class="selectItem rounded-2"><img src="../../assets/img/icons/check.svg" /></div>
-        <div class="menuWrapper"
-            @click.stop="clickShowVisible()"
-        >
-            <div class="headerButtons rounded-2"
-				
-			>
-				<span class="tasksBtnSymbol"></span>
+            <label>
+                <input class="form-check-input" type="checkbox" 
+                    v-model="item.complite"
+                    @click.stop="clickCheckTask()"
+                />
+            </label>
+            <div class="contentWrapper" 
+                :class="{uncomplite:!item.complite, complite:item.complite}"
+            >
+                <div class="content">
+                        <div class="text">{{ item.text }}</div>
+                        <div class="description">
+                            <div class="description__item">цена: {{ item.price }}</div>
+                            <div class="description__item">кол-во: {{ item.quantity }} </div>
+                            <div class="description__item">сумма: {{ item.quantity * item.price }}</div>
+
+                        </div>
+                        <div class="executor"
+                            v-if="item.executor_user_id == 0"
+                        >
+                            
+                        </div>
+                        <div class="executor"
+                            v-else
+                        >
+                            покупает: {{ taskLists.getNameUserForTask(item.executor_user_id) }}
+                        </div>
+
+                        <div class="smallWrapper">
+                            <div class="small">{{ smallText }}</div>
+                        </div>
+                </div>
             </div>
-            <div class="dropdownMenu rounded-2"
-                :class="{'show': showVisible}"
+            <div class="selectItem rounded-2"><img src="../../assets/img/icons/check.svg" /></div>
+            <div class="menuWrapper"
                 @click.stop="clickShowVisible()"
             >
-                <ul class="rounded-2">
-                    <li class="menu rounded-2"
-                        @click.stop="editTask(item)"
-                    >Редактировать</li>
-                    <li class="menu rounded-2"
-                        @click.stop="deleteTask(item.id)"
-                    >Удалить</li>
-                </ul>
+                <div class="headerButtons rounded-2"
+                    
+                >
+                    <span class="tasksBtnSymbol"></span>
+                </div>
+                <div class="dropdownMenu rounded-2"
+                    :class="{'show': showVisible}"
+                    @click.stop="clickShowVisible()"
+                >
+                    <ul class="rounded-2">
+                        <li class="menu rounded-2"
+                            @click.stop="editTask(item)"
+                        >Редактировать</li>
+                        <li class="menu rounded-2"
+                            @click.stop="deleteTask(item.id)"
+                        >Удалить</li>
+                    </ul>
+                </div>
             </div>
         </div>
-   </div>
+        
+ 
 </template>
 
 <script setup>
@@ -158,7 +161,7 @@ async function deleteTask(id) {
     pointer-events: auto;
     display: flex;
     /*align-items: center;*/
-    padding: 0.6rem 0.6rem 0.6rem 1rem;
+    padding: 0.6rem 0.6rem 0.6rem 0.61rem;
     background-color: var(--list-item-color);
 
     /*border: 1px #dee2e6 solid;*/
@@ -309,7 +312,7 @@ async function deleteTask(id) {
 .description{
     display: flex;
     @media  (max-width: 768px) { 
-      flex-direction:column;  
+        
 	  font-size: 0.8rem;
 	}
     &__item{
@@ -317,6 +320,11 @@ async function deleteTask(id) {
         margin-left: 10px; 
         min-width: 100px;
         flex-wrap: wrap;
+        @media  (max-width: 768px) { 
+            min-width: 87px;
+            width: 87px;
+            margin-left: 0px; 
+        }
     }
 }
 .executor{

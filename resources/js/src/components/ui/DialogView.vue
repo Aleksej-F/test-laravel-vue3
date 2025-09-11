@@ -115,7 +115,7 @@
 
 .dialog-box {
 	max-width: 700px;
-	width: 85%;
+	width: 92%;
 	background-color: #ebebeb;
 	z-index: 8001;
 	/*border-radius: 7px;*/

@@ -40,12 +40,14 @@
             v-if="tasks.getTaskSelectInfalidQuantity"
           >Для ввода разрешены цифры</p>
         </div>
-        <div>Кто покупает:</div>
-        <select  class="text-field__select" v-model="tasks.taskSelect.executor_user_id">
-          <option v-for="option in taskLists.taskListSelect.usersList" :value="option.id">
-            {{ option.name }}
-          </option>
-        </select>
+        <div v-if="taskLists.taskListSelect.usersCount > 1">
+          <div>Кто покупает:</div>
+          <select  class="text-field__select" v-model="tasks.taskSelect.executor_user_id">
+            <option v-for="option in taskLists.taskListSelect.usersList" :value="option.id">
+              {{ option.name }}
+            </option>
+          </select>
+        </div>
 		    <p>Комментарий:</p>
         <div class="dialogAlertField">
           <p class="alertMessageTitle" style="color: rgb(153, 153, 153);">
@@ -92,11 +94,14 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    background-color: #fff;
+    background-color: #e4e5ed;
     background-clip: padding-box;
     border: 1px solid var(--color-secondary);
     border-radius: var(--radius);
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    &:hover{
+      background-color: #ffffff;
+    }
     @media (max-width: 350px){
       height: 36px;
       padding: 2px;

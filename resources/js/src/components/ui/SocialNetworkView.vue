@@ -3,7 +3,7 @@
         
         <div data-v-57ed7e87="" class="social-share">
             <div class="social-share__title">
-                Поделиться ссылкой на списк в социальных сетях:
+                Поделиться ссылкой на список в социальных сетях:
             </div>
             <div class="social-share__items">
                <a v-for="(item, index ) in shareData" 
@@ -150,7 +150,7 @@ body {
     text-align: center;
     font-weight: bold;
     font-size: 0.875rem;
-    margin-bottom: 0.5rem;
+    padding:  5px;
 }
 
 .social-share__items {

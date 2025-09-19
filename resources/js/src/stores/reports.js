@@ -12,10 +12,7 @@ export const useReportsStore = defineStore('reports', () => {
   const showDetails = ref(false)
 
 
-  const viewCreateTaskVisible = ref(false)
-  const taskSelect = ref({text: ""})
-  const taskSignEditing  = ref(false)
-  const tasksSelectDelete = ref([])
+ 
 
   const reportlength = computed(() => report.value.length);
   
@@ -24,22 +21,27 @@ export const useReportsStore = defineStore('reports', () => {
     let sum = 0
 		report.value.forEach((user) => {
       user.tasks.forEach((element) => {
-        sum += element.quantity * element.price
+        if (element.complite) {
+          sum += element.quantity * element.price
+        }
+        
       })
     })
     
     return sum/report.value.length
 	})
   
-  const totalExpenditure = computed(() => {
+  const expenses = computed(() => {
 		let sum = 0
 		report.value.forEach((user) => {
       user.tasks.forEach((element) => {
-        sum += element.quantity * element.price
+        if (element.complite) {
+          sum += element.quantity * element.price
+        }
       })
     })
-    
-    return sum
+    const average = sum/report.value.length
+    return {average,sum}
 	})
 
   const showDetailsText = computed(() => {
@@ -88,10 +90,11 @@ export const useReportsStore = defineStore('reports', () => {
   return { 
     report,
     showDetails,
+    expenses,
 
     reportlength,
     averageExpense,
-    totalExpenditure,
+    
     showDetailsText,
 
     getReport,

@@ -53,11 +53,11 @@
 				<div class="content__item">
 					<div class="headerLine">
 						Средняя трата: 
-						{{ reports.averageExpense }}
+						{{ reports.expenses.average }}
 					</div>
 					<div class="headerLine">
 						Всего потрачено:
-						{{ reports.totalExpenditure }}
+						{{ reports.expenses.sum }}
 					</div>
 				</div>
 			</div>

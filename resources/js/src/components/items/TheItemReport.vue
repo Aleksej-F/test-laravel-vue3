@@ -21,19 +21,47 @@
             <div
                 v-if="props.displayDetails"
             > 
-                Купил:
+                Корзина:
+                 
                 <div class="report__content"
                     :class="{uncomplite:!item.complite, complite:item.complite}"
-                    v-for="(item, index) in itemReports.tasks"
+                    v-for="(item, index) in itemReportsTasksNoComlet"
                     :key="+item.id"
                 >
-                   
+                    <div class="description__item description__item-text"> {{ item.text}} </div> 
                     <div class="description">
-                        <div class="description__item"> {{ item.text}} </div> 
-                        <div class="description__item">кол-во: {{ item.quantity }} </div>
-                        <div class="description__item">цена: {{ item.price }}</div>
-                        <div class="description__item">сумма: {{ item.quantity * item.price }}</div>
+                        <div class="description__item">цена: </div>
+                        <div class="description__item">кол-во:  </div>
+                        <div class="description__item">сумма:</div>
+                    </div>
+                    <div class="description">
+                        <div class="description__item">{{ item.price }}</div>
+                        <div class="description__item">{{ item.quantity }} </div>
+                        <div class="description__item">{{ item.quantity * item.price }}</div>
+                    </div>
+                        
 
+                        <!-- <div class="smallWrapper">
+                            <div class="small">{{ smallText }}</div>
+                        </div> -->
+                </div>
+                Купил:
+                 
+                <div class="report__content"
+                    :class="{uncomplite:!item.complite, complite:item.complite}"
+                    v-for="(item, index) in itemReportsTasksComlet"
+                    :key="+item.id"
+                >
+                    <div class="description__item description__item-text"> {{ item.text}} </div> 
+                    <div class="description">
+                        <div class="description__item">цена: </div>
+                        <div class="description__item">кол-во:  </div>
+                        <div class="description__item">сумма:</div>
+                    </div>
+                    <div class="description">
+                        <div class="description__item">{{ item.price }}</div>
+                        <div class="description__item">{{ item.quantity }} </div>
+                        <div class="description__item">{{ item.quantity * item.price }}</div>
                     </div>
                         
 
@@ -108,12 +136,27 @@ watch(
 
 const smallText = computed(() => {
    //  console.log(props.item.tasks.length);
-    return props.item.smallText && props.item.smallText.length > 0 ?	props.item.smallText : "нет комментария";
+    return props.itemReports.tasks.filter((task) => task.complite) 
 });
+
+const itemReportsTasksComlet = computed(() => {
+   //  console.log(props.item.tasks.length);
+    return props.itemReports.tasks.filter((task) => task.complite)
+});
+
+const itemReportsTasksNoComlet = computed(() => {
+   //  console.log(props.item.tasks.length);
+    return props.itemReports.tasks.filter((task) => !task.complite)
+});
+
 
 function getSumTasks(tasks){
     let sum = 0
-    tasks.forEach((element) => sum += element.quantity * element.price);
+    tasks.forEach((element) => {
+        if (element.complite){
+            sum += element.quantity * element.price
+        }
+    });
     return sum
 }
 
@@ -127,6 +170,12 @@ function clickShowVisible() {
         showVisible.value = !showVisible.value;
     }, 100)
 }
+
+
+
+
+
+
 
 async function clickCheckTask(){
 	const item = {... props.item}
@@ -179,7 +228,7 @@ async function deleteTask(id) {
     pointer-events: auto;
     display: flex;
     /*align-items: center;*/
-    padding: 0.6rem 0.6rem 0.6rem 1rem;
+    padding: 0.5rem;
     background-color: #dbdfeb;
     justify-content: space-between;
     /*border: 1px #dee2e6 solid;*/
@@ -198,7 +247,7 @@ async function deleteTask(id) {
     transition: background-color 0.2s ease-out 0.1s;
     &:hover {
         cursor: pointer;
-        background-color: #c0bcbc;
+        background-color: #d2d2db;
     }
 }
 
@@ -262,13 +311,16 @@ async function deleteTask(id) {
     pointer-events: none;
 }
 
-.menuWrapper:hover {
+.menuWrapper{
+    position: absolute;
+    right:  20px;
+    &:hover {
 	cursor: pointer;
 
 	& .headerButtons{
 		cursor: pointer;
 		transform: scale(1.5, 1.5);
-	}
+	}}
 }
 .dropdownMenu {
     position: absolute;
@@ -332,37 +384,33 @@ async function deleteTask(id) {
     flex-wrap: wrap;
     justify-content: space-around;
     @media  (max-width: 768px) { 
-      flex-direction:column;  
-	  font-size: 1rem;
+       
+	  font-size: 0.8rem;
 	}
     &__item{
         color: var(--btn-active-color);
         margin-left: 10px; 
-        padding-left: 10px;
-        min-width: 120px;
+        
+        // min-width: 120px;
         flex: 1;
-        &:first-child{
-            flex: 2;
-            @media  (max-width: 768px) { 
-                font-size: 1rem;
-                font-weight: bold;
-                 padding-left: 0px;
-            }
+        &-text{
+           font-style:italic; 
         }
     }
 }
 .report__content-wrapper{
     width: 100%;
+   
 }
 .report{
    &__header{
-    display: flex;
-    justify-content: space-between;
-    @media  (max-width: 768px) { 
-      flex-direction:column;  
-	  font-size: 0.9rem;
-      
-	}
+        display: flex;
+        justify-content: space-between;
+        @media  (max-width: 768px) { 
+        flex-direction:column;  
+        font-size: 0.9rem;
+        
+        }
     &-item{
         flex: 1;
         padding-left: 10px;
@@ -375,8 +423,13 @@ async function deleteTask(id) {
             }
         }
     }
-}
-  
+   
+    }
+   &__content{
+        border:1px solid #999 ;
+        border-radius: 8px;
+        margin-bottom: 3px;
+    }
 }
 .executor{
     margin-left: 10px; 

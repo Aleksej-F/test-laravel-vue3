@@ -8,12 +8,14 @@
                     <div class="list-group" 
                       v-if="tasks.tasksLength > 0"
                       >
-                        <TheItemTask
-                            v-for="(item, index) in tasks.tasksNoCompleted"
-                            :key="+item.id"
-                            :item="item"
-                            :menuVisible="menuVisible"
-                        />
+                        <TransitionGroup name="list" tag="ul">
+                          <TheItemTask
+                              v-for="(item, index) in tasks.tasksNoCompleted"
+                              :key="+item.id"
+                              :item="item"
+                              :menuVisible="menuVisible"
+                          />
+                        </TransitionGroup>
                     </div>
                     <div class="list-group" v-else>
                         <p>
@@ -148,5 +150,23 @@
 	opacity: 1;
 	height: auto;
 	padding-bottom: 4rem;
+}
+
+.list-move, /* применять переход к движущимся элементам */
+.list-enter-active,
+.list-leave-active {
+  transition:  all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* убедитесь, что удаляющиеся элементы выведены из потока, чтобы 
+анимации перемещения могли быть рассчитаны правильно. */
+.list-leave-active {
+  position: absolute;
 }
 </style>

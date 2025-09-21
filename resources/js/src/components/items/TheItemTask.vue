@@ -1,5 +1,5 @@
 <template>
-   
+    
         <div class="listItem" 
             @click.stop="clickItemTaskList(item)"
         >
@@ -64,7 +64,7 @@
             </div>
         </div>
         
- 
+    
 </template>
 
 <script setup>
@@ -84,7 +84,9 @@ const showVisible = ref(false);
 
 const route = useRoute();
 const router = useRouter();
-
+const nameTransition = computed(() => {
+   return route.name == 'home' ? "home2": 'fade2'
+})
 const props = defineProps(["item", "index", "menuVisible"]);
 
 // console.log(route.meta.autch)
@@ -335,4 +337,6 @@ async function deleteTask(id) {
 	  font-size: 0.8rem;
 	}
 }
+
+
 </style>

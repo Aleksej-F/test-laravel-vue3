@@ -8,6 +8,7 @@
         >
             <div class="report__header">
                 <div class="report__header-item">{{ itemReports.name }} </div>
+                <div class="report__header-item">потратил: {{ getSumTasks(itemReports.tasks) }} </div>
                 <div class="report__header-item">средняя трата: {{ reports.averageExpense }} </div>
                 
                 <div class="report__header-item"
@@ -16,12 +17,12 @@
                 <div class="report__header-item"
                    v-else 
                 >получить: {{ getSumTasks(itemReports.tasks) - reports.averageExpense }} </div>
-                <div class="report__header-item">потратил: {{ getSumTasks(itemReports.tasks) }} </div>
+                
             </div>
             <div
                 v-if="props.displayDetails"
             > 
-                Корзина:
+                <div>Корзина {{ itemReportsTasksNoComlet.length > 0 ? ":": " - пуста"}}</div>
                  
                 <div class="report__content"
                     :class="{uncomplite:!item.complite, complite:item.complite}"
@@ -45,7 +46,7 @@
                             <div class="small">{{ smallText }}</div>
                         </div> -->
                 </div>
-                Купил:
+                <div>Купил{{ itemReportsTasksComlet.length > 0 ? ":": " - нет" }}</div>
                  
                 <div class="report__content"
                     :class="{uncomplite:!item.complite, complite:item.complite}"
